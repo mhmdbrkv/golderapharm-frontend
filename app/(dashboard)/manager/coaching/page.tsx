@@ -5,8 +5,10 @@ import { getAllCoachingReportsAction } from "@/features/coaching/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const result = await getAllCoachingReportsAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const result = await getAllCoachingReportsAction(page, limit);
 
   // Handle error case
   if (!result.success || !result.stats || !result.reports) {
@@ -24,7 +26,12 @@ export default async function Page() {
     <main className="flex flex-col gap-6 p-6 *:min-[1440px]:w-270.75! *:lg:w-5xl">
       <CoachingHeader data={result.stats} />
       <ReviewForm />
-      <CoachingReportList reports={result.reports} />
+      <CoachingReportList
+        reports={result.reports}
+        page={page}
+        limit={limit}
+        totalCount={result.totalCount ?? result.stats.totalReports}
+      />
     </main>
   );
 }

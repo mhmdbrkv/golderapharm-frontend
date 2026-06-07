@@ -46,6 +46,23 @@ export type VisitStatus =
   | "IN_PROGRESS";
 export type VisitType = "CHECK" | "COACHING" | "MANAGER";
 
+export type Pagination = {
+  currentPage: number;
+  limit: number;
+  skip: number;
+  totalPages: number;
+  next: number | null;
+  prev: number | null;
+};
+
+export type PaginatedApiResponse<T> = {
+  status: string;
+  message: string;
+  results: number;
+  pagination: Pagination;
+  data: T;
+};
+
 // Forecast related types
 export type ForecastPeriodType = "MONTHLY" | "QUARTERLY";
 export type ForecastStatus = "PENDING" | "APPROVED" | "REJECTED";

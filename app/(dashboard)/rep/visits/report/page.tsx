@@ -22,7 +22,7 @@ export default async function Page({
   ]);
 
   const products = productsResult.success
-    ? (productsResult.data?.data ?? [])
+    ? (productsResult.data ?? [])
     : [];
 
   return (

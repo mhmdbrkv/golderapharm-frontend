@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Pagination from "@/components/ui/Pagination";
 import { Search, Calendar } from "lucide-react";
 import type { SaleApiResponse, DateFilter } from "../lib/types";
 import {
@@ -15,6 +16,9 @@ import {
 
 interface SalesTableProps {
   sales: SaleApiResponse[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
 const DATE_FILTERS: { label: string; value: DateFilter }[] = [
@@ -91,7 +95,7 @@ function formatCellValue(value: unknown): string {
   return str;
 }
 
-export default function SalesTable({ sales }: SalesTableProps) {
+export default function SalesTable({ sales, page, limit, totalCount }: SalesTableProps) {
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [q, setQ] = useState("");
 
@@ -118,6 +122,11 @@ export default function SalesTable({ sales }: SalesTableProps) {
 
   return (
     <section className="border-secondary-light mt-6 rounded-[14px] border-[.8px] bg-white p-6 min-[1440px]:w-270.75! lg:w-5xl">
+      
+            <div className="mt-4">
+        <Pagination page={page} limit={limit} totalCount={totalCount ?? sales.length} />
+      </div>
+      
       {/* Filters */}
       <header className="mb-6 flex flex-wrap items-center gap-3">
         <h2 className="text-xl font-semibold">Sales Records</h2>
@@ -211,6 +220,8 @@ export default function SalesTable({ sales }: SalesTableProps) {
       <p className="text-secondary-dark mt-4 text-xs">
         Showing {filtered.length} of {sales.length} records
       </p>
+
+
     </section>
   );
 }

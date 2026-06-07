@@ -1,4 +1,5 @@
 import { ForecastPeriodType, ForecastStatus, Specialty } from "@/lib/types";
+import type { PaginatedApiResponse } from "@/lib/types";
 
 /**
  * Backend API types
@@ -23,13 +24,7 @@ export interface ForecastApiResponse {
   }[];
 }
 
-export interface GetForecastsResponse {
-  success: boolean;
-  data: {
-    results: number;
-    forecasts: ForecastApiResponse[];
-  };
-}
+export type GetForecastsResponse = PaginatedApiResponse<ForecastApiResponse[]>;
 
 export interface CreateForecastApiDto {
   periodType: string;
@@ -59,12 +54,7 @@ export interface ProductApiResponse {
   updatedAt: string;
 }
 
-export interface GetProductsResponse {
-  status: string;
-  message: string;
-  results: number;
-  data: ProductApiResponse[];
-}
+export type GetProductsResponse = PaginatedApiResponse<ProductApiResponse[]>;
 
 /**
  * Backend API response for doctors
@@ -82,11 +72,7 @@ export interface DoctorApiResponse {
   isActive: boolean;
 }
 
-export interface GetDoctorsResponse {
-  data: {
-    doctors: DoctorApiResponse[];
-  };
-}
+export type GetDoctorsResponse = PaginatedApiResponse<DoctorApiResponse[]>;
 
 /**
  * UI types

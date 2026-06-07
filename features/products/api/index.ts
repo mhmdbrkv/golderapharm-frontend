@@ -2,6 +2,7 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
+import { buildPaginationQuery } from "@/lib/utils";
 import type {
   GetProductsResponse,
   ProductApiResponse,
@@ -11,10 +12,16 @@ import type {
 /**
  * Fetch all products
  */
-export async function fetchProducts(): Promise<GetProductsResponse> {
-  return apiFetch<GetProductsResponse>("/api/products", {
-    method: "GET",
-  });
+export async function fetchProducts(
+  page?: number,
+  limit?: number,
+): Promise<GetProductsResponse> {
+  return apiFetch<GetProductsResponse>(
+    `/api/products${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -33,13 +40,14 @@ export async function createProduct(
  * Server action to get all products
  * NOTE: Also imported by features/forecast for product selection in forecasts and visits
  */
-export async function getProductsAction() {
+export async function getProductsAction(page?: number, limit?: number) {
   try {
-    const response = await fetchProducts();
-    // console.log("products result:", JSON.stringify(response, null, 2));
+    const response = await fetchProducts(page, limit);
     return {
       success: true,
-      data: response,
+      data: response.data,
+      results: response.results,
+      pagination: response.pagination,
     };
   } catch (error) {
     const err = error as ApiError;

@@ -28,6 +28,8 @@ export type SaleApiResponse = {
 export type SalesQueryParams = {
   date?: string;
   sheetName?: string;
+  page?: number;
+  limit?: number;
 };
 
 export type SalesApiEnvelope = {

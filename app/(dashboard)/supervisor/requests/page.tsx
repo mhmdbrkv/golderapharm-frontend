@@ -9,13 +9,17 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const myRequests = await getMyRequestsAction();
-  const repRequests = await getSupervisorTeamRequestsAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+
+  const myRequests = await getMyRequestsAction(page, limit);
+  const repRequests = await getSupervisorTeamRequestsAction(page, limit);
 
   const requests = myRequests.success ? (myRequests.data ?? []) : [];
   const teamRequests = repRequests.success ? (repRequests.data ?? []) : [];
   const allRequests = [...requests, ...teamRequests];
+  const totalCount = (myRequests.success ? (myRequests.totalCount ?? 0) : 0) + (repRequests.success ? (repRequests.totalCount ?? 0) : 0);
 
   // Calculate dynamic stats
   const total = allRequests.length;
@@ -49,7 +53,7 @@ export default async function Page() {
           approved={approved}
           rejected={rejected}
         />
-        <RequestsList role="SUPERVISOR" requestsData={allRequests} />
+        <RequestsList role="SUPERVISOR" requestsData={allRequests} page={page} limit={limit} totalCount={totalCount} />
       </section>
     </main>
   );

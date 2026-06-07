@@ -2,6 +2,7 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
+import { buildPaginationQuery } from "@/lib/utils";
 import type {
   ForecastManagementApiResponse,
   GetAllForecastsResponse,
@@ -51,21 +52,31 @@ function transformForecast(
 /**
  * Fetch all forecasts from API
  */
-export async function getAllForecasts(): Promise<GetAllForecastsResponse> {
-  return apiFetch<GetAllForecastsResponse>("/api/forecasts/all", {
-    method: "GET",
-  });
+export async function getAllForecasts(
+  page?: number,
+  limit?: number,
+): Promise<GetAllForecastsResponse> {
+  return apiFetch<GetAllForecastsResponse>(
+    `/api/forecasts/all${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Server action to get all forecasts
  */
-export async function getAllForecastsAction(): Promise<{
+export async function getAllForecastsAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   data?: {
     data: ForecastManagement[];
     results: number;
   };
+  totalCount?: number;
   error?: {
     message: string;
     code: string;
@@ -73,7 +84,7 @@ export async function getAllForecastsAction(): Promise<{
   };
 }> {
   try {
-    const response = await getAllForecasts();
+    const response = await getAllForecasts(page, limit);
 
     const forecasts = response.data.map(transformForecast);
 
@@ -83,6 +94,7 @@ export async function getAllForecastsAction(): Promise<{
         data: forecasts,
         results: response.results,
       },
+      totalCount: response.results,
     };
   } catch (error) {
     const err = error as ApiError;

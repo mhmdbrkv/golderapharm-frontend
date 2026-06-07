@@ -8,6 +8,7 @@ import {
   formatSaudiMonthYear,
   getSaudiDateParts,
   parseDateValue,
+  buildPaginationQuery,
 } from "@/lib/utils";
 import {
   Forecast,
@@ -232,18 +233,24 @@ function mapApiForecastToForecast(apiForecast: ForecastApiResponse): Forecast {
 /**
  * Fetch all forecasts for current user from backend API
  */
-export async function fetchMyForecasts(): Promise<{
+export async function fetchMyForecasts(
+  page?: number,
+  limit?: number,
+): Promise<{
   data: { results: number; data: Forecast[] };
 }> {
-  const response = await apiFetch<GetForecastsResponse>("/api/forecasts", {
-    method: "GET",
-  });
+  const response = await apiFetch<GetForecastsResponse>(
+    `/api/forecasts${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 
-  const forecasts = response.data.forecasts.map(mapApiForecastToForecast);
+  const forecasts = response.data.map(mapApiForecastToForecast);
 
   return {
     data: {
-      results: response.data.results,
+      results: response.results,
       data: forecasts,
     },
   };
@@ -375,7 +382,7 @@ export async function fetchMyDoctors(): Promise<{
     method: "GET",
   });
 
-  const doctors = response.data.doctors
+  const doctors = response.data
     .filter((doctor) => doctor.isActive)
     .map(mapDoctorApiToDoctor);
 
@@ -387,16 +394,21 @@ export async function fetchMyDoctors(): Promise<{
 /**
  * Server action to get forecasts with error handling
  */
-export async function getMyForecastsAction(): Promise<{
+export async function getMyForecastsAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   data?: Forecast[];
+  totalCount?: number;
   error?: ApiError;
 }> {
   try {
-    const response = await fetchMyForecasts();
+    const response = await fetchMyForecasts(page, limit);
     return {
       success: true,
       data: response.data.data,
+      totalCount: response.data.results,
     };
   } catch (error) {
     const err = error as ApiError;

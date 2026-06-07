@@ -1,9 +1,11 @@
 "use server";
 
 import { apiFetch } from "@/services/http";
+import type { Pagination } from "@/lib/types";
 import { ApiError } from "@/services/api-error";
 import { CoachingReport } from "../lib/types";
 import {
+  buildPaginationQuery,
   formatSaudiDateDisplay,
   getSaudiYearMonthKey,
   parseDateValue,
@@ -48,25 +50,53 @@ type GetAllCoachingReportsResponse = {
   status: string;
   message: string;
   results: number;
+  pagination: Pagination;
   data: CoachingReportApiResponse[];
 };
+
+type CoachingReportsActionResult =
+  | {
+      success: true;
+      reports: CoachingReport[];
+      totalCount: number;
+      stats: {
+        totalReports: number;
+        awaitingRepFeedback: number;
+        averageRating: number;
+        thisMonth: number;
+      };
+      error?: ApiError;
+    }
+  | {
+      success: false;
+      error: ApiError;
+    };
 
 /**
  * Fetch all coaching reports for manager
  */
-export async function getAllCoachingReports(): Promise<GetAllCoachingReportsResponse> {
-  return apiFetch<GetAllCoachingReportsResponse>("/api/coaching-reports/all", {
-    method: "GET",
-  });
+export async function getAllCoachingReports(
+  page?: number,
+  limit?: number,
+): Promise<GetAllCoachingReportsResponse> {
+  return apiFetch<GetAllCoachingReportsResponse>(
+    `/api/coaching-reports/all${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Server action to get all coaching reports for manager
  * ! This action is used in the manager coaching dashboard
  */
-export async function getAllCoachingReportsAction() {
+export async function getAllCoachingReportsAction(
+  page?: number,
+  limit?: number,
+): Promise<CoachingReportsActionResult> {
   try {
-    const response = await getAllCoachingReports();
+    const response = await getAllCoachingReports(page, limit);
 
     // Map API response to CoachingReport type
     const reports: CoachingReport[] = response.data.map((report) => {
@@ -114,6 +144,7 @@ export async function getAllCoachingReportsAction() {
     return {
       success: true,
       reports,
+      totalCount: response.results,
       stats: {
         totalReports: response.results,
         awaitingRepFeedback: response.data.filter((r) => !r.repComment).length,

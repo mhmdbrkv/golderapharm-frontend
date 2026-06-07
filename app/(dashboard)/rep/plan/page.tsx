@@ -8,10 +8,16 @@ import { getRegionsAction } from "@/lib/requests/regions";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const params = await searchParams;
+
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
+
+ 
   // Fetch plans data and user profile in parallel
   const [plansResult, profile] = await Promise.all([
-    getRepPlansAction(),
+    getRepPlansAction(page, limit),
     fetchProfile().catch(() => null),
   ]);
 
@@ -62,7 +68,12 @@ export default async function Page() {
         />
       </header>
       <PlanStats data={stats} />
-      <RepPlansList plans={plans} />
+      <RepPlansList
+        plans={plans}
+        page={page}
+        limit={limit}
+        totalCount={plansResult.totalCount ?? plans.length}
+      />
     </main>
   );
 }

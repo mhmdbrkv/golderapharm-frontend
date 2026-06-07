@@ -3,15 +3,22 @@
 import { useState } from "react";
 import TeamCard from "@/features/team/components/TeamCard";
 import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/Pagination";
 import { Search as SearchIcon } from "lucide-react";
 import { User } from "../../lib/types";
 
 type SupervisorTeamListProps = {
   members: User[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 export default function SupervisorTeamList({
   members,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: SupervisorTeamListProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -47,6 +54,10 @@ export default function SupervisorTeamList({
           No team members found
         </div>
       )}
+
+      <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
     </div>
   );
 }

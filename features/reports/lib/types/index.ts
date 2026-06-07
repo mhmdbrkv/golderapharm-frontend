@@ -23,20 +23,15 @@ export interface VisitReportApiResponse {
   };
 }
 
-export interface VisitReportsResponse {
-  status: string;
-  message: string;
-  data: {
-    results: number;
-    data: VisitReportApiResponse[];
-  };
-}
+import type { PaginatedApiResponse } from "@/lib/types";
+
+export type VisitReportsResponse = PaginatedApiResponse<
+  VisitReportApiResponse[]
+>;
 
 export interface VisitReport {
   id: string;
   visitId: string;
-  doctorNameAR: string;
-  doctorNameEN: string;
   visitDate: string;
   duration: string;
   rating: string;

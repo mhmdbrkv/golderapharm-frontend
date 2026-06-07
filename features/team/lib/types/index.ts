@@ -1,3 +1,4 @@
+import type { PaginatedApiResponse } from "@/lib/types";
 import { UserRole } from "@/lib/types";
 
 // Region data structure
@@ -178,26 +179,11 @@ export type UserApiResponse = {
   inHR?: boolean;
 };
 
-export type UserDetailResponse = {
-  status: string;
-  message: string;
-  results: number;
-  data: UserApiResponse[];
-};
+export type UserDetailResponse = PaginatedApiResponse<UserApiResponse[]>;
 
-export type ManagerTeamResponse = {
-  status: string;
-  message: string;
+export type ManagerTeamResponse = PaginatedApiResponse<UserApiResponse[]> & {
   supervisorsCount: number;
   repsCount: number;
-  data: UserApiResponse[];
 };
 
-export type SupervisorTeamResponse = {
-  status: string;
-  message: string;
-  data: {
-    results: number;
-    data: UserApiResponse[];
-  };
-};
+export type SupervisorTeamResponse = PaginatedApiResponse<UserApiResponse[]>;

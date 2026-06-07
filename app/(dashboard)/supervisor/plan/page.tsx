@@ -8,9 +8,11 @@ import { getRegionsAction } from "@/lib/requests/regions";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
   const [plansResult, profile] = await Promise.all([
-    getSupervisorPlansAction(),
+    getSupervisorPlansAction(page, limit),
     fetchProfile().catch(() => null),
   ]);
 
@@ -60,8 +62,11 @@ export default async function Page() {
       </header>
       <PlanStats data={stats} />
       <SupervisorPlansList
-        repPlans={plansResult.repPlans}
+        repPlans={plansResult.repPlans ?? []}
         myPlans={plansResult.myPlans ?? []}
+        page={page}
+        limit={limit}
+        totalCount={plansResult.totalCount ?? (plansResult.repPlans?.length ?? 0)}
       />
     </main>
   );

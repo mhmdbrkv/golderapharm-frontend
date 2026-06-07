@@ -2,27 +2,38 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
+import { buildPaginationQuery } from "@/lib/utils";
 import { HRMember, HRStats, HRUsersApiResponse } from "../lib/types";
 import { revalidatePath } from "next/cache";
 
 /**
  * Fetch all users from /api/managers/users endpoint
  */
-export async function fetchAllUsers(): Promise<HRUsersApiResponse> {
-  return apiFetch<HRUsersApiResponse>("/api/managers/users", {
-    method: "GET",
-  });
+export async function fetchAllUsers(
+  page?: number,
+  limit?: number,
+): Promise<HRUsersApiResponse> {
+  return apiFetch<HRUsersApiResponse>(
+    `/api/managers/users${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Get all HR members with stats
  */
-export async function getHRMembersAction(): Promise<{
+export async function getHRMembersAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   data?: {
     members: HRMember[];
     stats: HRStats;
   };
+  totalCount?: number;
   error?: {
     message: string;
     code: string;
@@ -30,7 +41,7 @@ export async function getHRMembersAction(): Promise<{
   };
 }> {
   try {
-    const response = await fetchAllUsers();
+    const response = await fetchAllUsers(page, limit);
 
     if (response.status !== "success") {
       return {
@@ -75,6 +86,7 @@ export async function getHRMembersAction(): Promise<{
         members,
         stats,
       },
+      totalCount: response.results,
     };
   } catch (error) {
     const err = error as ApiError;

@@ -2,7 +2,11 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
-import { formatDateOnly, isSameCalendarDate } from "@/lib/utils";
+import {
+  buildPaginationQuery,
+  formatDateOnly,
+  isSameCalendarDate,
+} from "@/lib/utils";
 import { VisitFormValues } from "@/features/visits/lib/schemas";
 import {
   FetchVisitsResponse,
@@ -15,27 +19,39 @@ import { Visit } from "@/features/visits/lib/types/ui";
 /**
  * Fetch visits for medical rep from API
  */
-export async function fetchRepVisits(): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>("/api/visits", {
-    method: "GET",
-  });
+export async function fetchRepVisits(
+  page?: number,
+  limit?: number,
+): Promise<FetchVisitsResponse> {
+  return apiFetch<FetchVisitsResponse>(
+    `/api/visits${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Fetch all visits for manager from API
  */
-export async function fetchAllVisits(): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>("/api/visits/all", {
-    method: "GET",
-  });
+export async function fetchAllVisits(
+  page?: number,
+  limit?: number,
+): Promise<FetchVisitsResponse> {
+  return apiFetch<FetchVisitsResponse>(
+    `/api/visits/all${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Server action to get all visits with data transformation
  */
-export async function getVisitsAction() {
+export async function getVisitsAction(page?: number, limit?: number) {
   try {
-    const response = await fetchRepVisits();
+    const response = await fetchRepVisits(page, limit);
 
     // Transform API response to UI format
     const visits: Visit[] = response.data.map(transformVisitApiResponse);
@@ -43,6 +59,7 @@ export async function getVisitsAction() {
     return {
       success: true,
       visits,
+      totalCount: response.results,
       stats: {
         total: response.results,
       },
@@ -65,22 +82,23 @@ export async function getVisitsAction() {
 /**
  * Server action to get all visits for supervisor (team scope)
  */
-export async function getSupervisorVisitsAction() {
-  return getManagerVisitsAction();
+export async function getSupervisorVisitsAction(page?: number, limit?: number) {
+  return getManagerVisitsAction(page, limit);
 }
 
 /**
  * Server action to get all visits for manager
  */
-export async function getManagerVisitsAction() {
+export async function getManagerVisitsAction(page?: number, limit?: number) {
   try {
-    const response = await fetchAllVisits();
+    const response = await fetchAllVisits(page, limit);
 
     const visits: Visit[] = response.data.map(transformVisitApiResponse);
 
     return {
       success: true,
       visits,
+      totalCount: response.results,
       stats: {
         total: response.results,
       },

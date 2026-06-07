@@ -1,6 +1,8 @@
 "use server";
 
 import { apiFetch } from "@/services/http";
+import type { PaginatedApiResponse } from "@/lib/types";
+import { buildPaginationQuery } from "@/lib/utils";
 import { ApiError } from "@/services/api-error";
 import {
   DoctorApiResponse,
@@ -11,31 +13,45 @@ import {
 /**
  * Fetch all doctors
  */
-export async function fetchDoctors(): Promise<{
-  data: DoctorApiResponse[];
-}> {
-  return apiFetch<{
-    data: DoctorApiResponse[];
-  }>("/api/doctors", {
-    method: "GET",
-  });
+export async function fetchDoctors(
+  page?: number,
+  limit?: number,
+): Promise<PaginatedApiResponse<DoctorApiResponse[]>> {
+  return apiFetch<PaginatedApiResponse<DoctorApiResponse[]>>(
+    `/api/doctors${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Fetch doctors with optional sub-region filter
  */
-export async function fetchDoctorsWithFilter(subRegion?: string): Promise<{
-  data: DoctorApiResponse[];
-}> {
-  const endpoint = subRegion
-    ? `/api/doctors?subRegion=${encodeURIComponent(subRegion)}`
-    : "/api/doctors";
+export async function fetchDoctorsWithFilter(
+  subRegion?: string,
+  page?: number,
+  limit?: number,
+): Promise<PaginatedApiResponse<DoctorApiResponse[]>> {
+  const params = new URLSearchParams();
+
+  if (subRegion) {
+    params.append("subRegion", subRegion);
+  }
+
+  if (page !== undefined) {
+    params.append("page", String(page));
+  }
+
+  if (limit !== undefined) {
+    params.append("limit", String(limit));
+  }
+
+  const endpoint = `/api/doctors${params.toString() ? `?${params.toString()}` : ""}`;
 
   console.log(endpoint);
 
-  return apiFetch<{
-    data: DoctorApiResponse[];
-  }>(endpoint, {
+  return apiFetch<PaginatedApiResponse<DoctorApiResponse[]>>(endpoint, {
     method: "GET",
   });
 }
@@ -94,13 +110,19 @@ export async function deleteDoctor(id: string): Promise<void> {
  * Server action to get all doctors
  * ! This action is used in the coaching feature to fetch doctors for joint visit reviews
  */
-export async function getDoctorsAction(subRegion?: string) {
+export async function getDoctorsAction(
+  subRegion?: string,
+  page: number = 1,
+  limit: number = 10,
+) {
   try {
-    const { data } = await fetchDoctorsWithFilter(subRegion);
+    const response = await fetchDoctorsWithFilter(subRegion, page, limit);
 
     return {
       success: true,
-      data: data,
+      data: response.data,
+      results: response.results,
+      pagination: response.pagination,
     };
   } catch (error) {
     console.error("Doctors fetch error:", error);

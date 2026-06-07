@@ -1,17 +1,26 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Pagination from "@/components/ui/Pagination";
 
 import RepPlanCard from "./RepPlanCard";
 import { VisitPlan } from "@/features/plan/api/get"
 
 type PlansListProps = {
   plans: VisitPlan[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 type TabType = "all" | "PENDING" | "APPROVED";
 
-export default function RepPlansList({ plans }: PlansListProps) {
+export default function RepPlansList({
+  plans,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
+}: PlansListProps) {
   const [activeTab, setActiveTab] = useState<TabType>("all");
 
   // Count plans by status
@@ -37,6 +46,9 @@ export default function RepPlansList({ plans }: PlansListProps) {
 
   return (
     <div className="border-secondary-light mt-6 rounded-[14px] border-[0.8px] bg-white p-6">
+           <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
       {/* Tabs */}
       <div className="flex w-fit items-center gap-2 rounded-[14px] bg-[#F1F5F9] p-1">
         {tabs.map((tab) => (
@@ -76,6 +88,8 @@ export default function RepPlansList({ plans }: PlansListProps) {
           filteredPlans.map((plan) => <RepPlanCard key={plan.id} plan={plan} />)
         )}
       </div>
+
+
     </div>
   );
 }

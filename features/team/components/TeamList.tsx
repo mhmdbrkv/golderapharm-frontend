@@ -3,6 +3,7 @@
 import { useState } from "react";
 import TeamCard from "@/features/team/components/TeamCard";
 import { Input } from "@/components/ui/input";
+import Pagination from "@/components/ui/Pagination";
 import { Search as SearchIcon } from "lucide-react";
 import { User } from "../lib/types";
 import { useRoleUI } from "@/core/ui/role-ui-context";
@@ -16,6 +17,10 @@ type TeamListProps = {
     supervisorsCount: number;
     repsCount: number;
   };
+  page?: number;
+  limit?: number;
+  medicalRepsTotalCount?: number;
+  supervisorsTotalCount?: number;
 };
 
 export default function TeamList({
@@ -23,6 +28,10 @@ export default function TeamList({
   medicalReps,
   supervisors,
   stats,
+  page = 1,
+  limit = 10,
+  medicalRepsTotalCount = 0,
+  supervisorsTotalCount = 0,
 }: TeamListProps) {
   const { role } = useRoleUI();
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,6 +99,20 @@ export default function TeamList({
             : "No team members found"}
         </div>
       )}
+
+      <div className="mt-6">
+        <Pagination
+          page={page}
+          limit={limit}
+          totalCount={
+            isManager
+              ? activeTab === "reps"
+                ? medicalRepsTotalCount
+                : supervisorsTotalCount
+              : members.length
+          }
+        />
+      </div>
     </>
   );
 }

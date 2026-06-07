@@ -18,6 +18,10 @@ type TeamPageClientProps = {
   };
   success: boolean;
   openDialog: boolean;
+  page?: number;
+  limit?: number;
+  medicalRepsTotalCount?: number;
+  supervisorsTotalCount?: number;
 };
 
 export default function TeamPageClient({
@@ -27,6 +31,10 @@ export default function TeamPageClient({
   stats,
   success,
   openDialog,
+  page = 1,
+  limit = 10,
+  medicalRepsTotalCount = 0,
+  supervisorsTotalCount = 0,
 }: TeamPageClientProps) {
   const router = useRouter();
 
@@ -65,6 +73,10 @@ export default function TeamPageClient({
           medicalReps={medicalReps}
           supervisors={supervisors}
           stats={stats}
+          page={page}
+          limit={limit}
+          medicalRepsTotalCount={medicalRepsTotalCount}
+          supervisorsTotalCount={supervisorsTotalCount}
         />
       ) : (
         <div className="text-secondary-dark mt-8 text-center">

@@ -2,6 +2,7 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
+import { buildPaginationQuery } from "@/lib/utils";
 import type {
   GetPharmaciesResponse,
   PharmacyApiResponse,
@@ -11,10 +12,16 @@ import type {
 /**
  * Fetch all pharmacies
  */
-export async function fetchPharmacies(): Promise<GetPharmaciesResponse> {
-  return apiFetch<GetPharmaciesResponse>("/api/pharmacies", {
-    method: "GET",
-  });
+export async function fetchPharmacies(
+  page?: number,
+  limit?: number,
+): Promise<GetPharmaciesResponse> {
+  return apiFetch<GetPharmaciesResponse>(
+    `/api/pharmacies${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -32,12 +39,17 @@ export async function createPharmacy(
 /**
  * Server action to get all pharmacies
  */
-export async function getPharmaciesAction() {
+export async function getPharmaciesAction(
+  page: number = 1,
+  limit: number = 10,
+) {
   try {
-    const response = await fetchPharmacies();
+    const response = await fetchPharmacies(page, limit);
     return {
       success: true,
-      data: response,
+      data: response.data,
+      results: response.results,
+      pagination: response.pagination,
     };
   } catch (error) {
     const err = error as ApiError;

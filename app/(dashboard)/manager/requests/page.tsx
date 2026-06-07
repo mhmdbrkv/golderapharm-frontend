@@ -4,9 +4,13 @@ import { getManagerTeamRequestsAction } from "@/features/requests/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const result = await getManagerTeamRequestsAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+
+  const result = await getManagerTeamRequestsAction(page, limit);
   const requests = result.success ? (result.data ?? []) : [];
+  const totalCount = result.success ? (result.totalCount ?? requests.length) : 0;
 
  
   // Calculate dynamic stats
@@ -34,7 +38,7 @@ export default async function Page() {
           approved={approved}
           rejected={rejected}
         />
-        <RequestsList role="MANAGER" requestsData={requests} />
+        <RequestsList role="MANAGER" requestsData={requests} page={page} limit={limit} totalCount={totalCount} />
       </section>
     </main>
   );

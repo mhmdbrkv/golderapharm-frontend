@@ -5,6 +5,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function buildPaginationQuery(params?: {
+  page?: number;
+  limit?: number;
+  [key: string]: string | number | boolean | undefined;
+}) {
+  if (!params) return "";
+
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.append(key, String(value));
+    }
+  });
+
+  return query.toString() ? `?${query.toString()}` : "";
+}
+
 export const getInitials = (name: string) => {
   return name
     .split(" ")

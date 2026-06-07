@@ -2,6 +2,8 @@
 
 import { apiFetch } from "@/services/http";
 import type { ApiError } from "@/services/api-error";
+import type { PaginatedApiResponse } from "@/lib/types";
+import { buildPaginationQuery } from "@/lib/utils";
 import { PlanStatus, VisitPlanType } from "@/lib/types";
 import { format } from "date-fns";
 import { fetchProfile } from "@/features/profile/api";
@@ -42,12 +44,7 @@ export type PlanApiResponse = {
   };
 };
 
-type GetPlansApiResponse = {
-  status: string;
-  message: string;
-  results: number;
-  data: PlanApiResponse[];
-};
+type GetPlansApiResponse = PaginatedApiResponse<PlanApiResponse[]>;
 
 // Types specific to GET operations
 export type RepInfo = {
@@ -173,17 +170,22 @@ function mapApiResponseToPlan(apiPlan: PlanApiResponse): Plan {
 /**
  * Get all plans for rep
  */
-export async function getRepPlansAction(): Promise<{
+export async function getRepPlansAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   data?: VisitPlan[];
+  totalCount?: number;
   error?: ApiError;
 }> {
   try {
-    const response = await apiFetch<GetPlansApiResponse>("/api/plans", {
-      method: "GET",
-    });
-
-    // console.log("response", response);
+    const response = await apiFetch<GetPlansApiResponse>(
+      `/api/plans${buildPaginationQuery({ page, limit })}`,
+      {
+        method: "GET",
+      },
+    );
 
     // Map API response to VisitPlan format
     const plans = response.data.map(mapApiResponseToVisitPlan);
@@ -191,6 +193,7 @@ export async function getRepPlansAction(): Promise<{
     return {
       success: true,
       data: plans,
+      totalCount: response.results,
     };
   } catch (error) {
     console.error("Error fetching plans:", error);
@@ -204,21 +207,29 @@ export async function getRepPlansAction(): Promise<{
 /**
  * Get all plans for manager
  */
-export async function getManagerPlansAction(): Promise<{
+export async function getManagerPlansAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   data?: VisitPlan[];
+  totalCount?: number;
   error?: ApiError;
 }> {
   try {
-    const response = await apiFetch<GetPlansApiResponse>("/api/plans/all", {
-      method: "GET",
-    });
+    const response = await apiFetch<GetPlansApiResponse>(
+      `/api/plans/all${buildPaginationQuery({ page, limit })}`,
+      {
+        method: "GET",
+      },
+    );
 
     const plans = response.data.map(mapApiResponseToVisitPlan);
 
     return {
       success: true,
       data: plans,
+      totalCount: response.results,
     };
   } catch (error) {
     console.error("Error fetching manager plans:", error);
@@ -232,17 +243,24 @@ export async function getManagerPlansAction(): Promise<{
 /**
  * Get plans for supervisor (team rep plans + own plans)
  */
-export async function getSupervisorPlansAction(): Promise<{
+export async function getSupervisorPlansAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   repPlans?: VisitPlan[];
   myPlans?: Plan[];
+  totalCount?: number;
   error?: ApiError;
 }> {
   try {
     const [response, profile] = await Promise.all([
-      apiFetch<GetPlansApiResponse>("/api/plans", {
-        method: "GET",
-      }),
+      apiFetch<GetPlansApiResponse>(
+        `/api/plans${buildPaginationQuery({ page, limit })}`,
+        {
+          method: "GET",
+        },
+      ),
       fetchProfile().catch(() => null),
     ]);
 
@@ -263,6 +281,7 @@ export async function getSupervisorPlansAction(): Promise<{
       success: true,
       repPlans,
       myPlans,
+      totalCount: response.results,
     };
   } catch (error) {
     console.error("Error fetching supervisor plans:", error);

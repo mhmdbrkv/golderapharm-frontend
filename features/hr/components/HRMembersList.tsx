@@ -2,14 +2,23 @@
 
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
+import Pagination from "@/components/ui/Pagination";
 import { HRMember } from "../lib/types";
 import { HRMemberCard } from "./HRMemberCard";
 
 type HRMembersListProps = {
   members: HRMember[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
-export function HRMembersList({ members }: HRMembersListProps) {
+export function HRMembersList({
+  members,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
+}: HRMembersListProps) {
   const [tab, setTab] = useState<"all" | "supervisors" | "reps">("all");
   const [q, setQ] = useState("");
 
@@ -88,6 +97,10 @@ export function HRMembersList({ members }: HRMembersListProps) {
             No members found.
           </div>
         )}
+      </div>
+
+      <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
       </div>
     </section>
   );

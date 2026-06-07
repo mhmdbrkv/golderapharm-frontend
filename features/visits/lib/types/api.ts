@@ -1,4 +1,5 @@
 import { VisitStatus, VisitType } from "@/lib/types";
+import type { PaginatedApiResponse } from "@/lib/types";
 
 /**
  * API response structure for a single visit
@@ -32,12 +33,7 @@ export type VisitApiResponse = {
 /**
  * API response for fetching all visits
  */
-export type FetchVisitsResponse = {
-  status: string;
-  message: string;
-  results: number;
-  data: VisitApiResponse[];
-};
+export type FetchVisitsResponse = PaginatedApiResponse<VisitApiResponse[]>;
 
 /**
  * DTO for creating a visit

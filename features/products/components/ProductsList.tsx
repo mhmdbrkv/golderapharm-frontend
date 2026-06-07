@@ -4,9 +4,13 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { format } from "date-fns";
 import type { ProductApiResponse } from "../lib/types";
+import Pagination from "@/components/ui/Pagination";
 
 interface ProductsListProps {
   products: ProductApiResponse[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
 function getCategory(internalRef: string | null): string {
@@ -20,7 +24,7 @@ function getCategory(internalRef: string | null): string {
   return map[code] || "General";
 }
 
-export default function ProductsList({ products }: ProductsListProps) {
+export default function ProductsList({ products, page = 1, limit = 10, totalCount = 0 }: ProductsListProps) {
   const [q, setQ] = useState("");
 
   const filtered = useMemo(() => {
@@ -35,6 +39,14 @@ export default function ProductsList({ products }: ProductsListProps) {
 
   return (
     <section className="border-secondary-light mt-6 rounded-[14px] border-[.8px] bg-white p-6 min-[1440px]:w-270.75! lg:w-5xl">
+     
+           <div className="mt-4 flex items-center justify-between">
+        <p className="text-secondary-dark text-xs">
+          Showing {filtered.length} of {totalCount || products.length} products
+        </p>
+        <Pagination page={page} limit={limit} totalCount={totalCount || products.length} />
+      </div>
+     
       {/* Filters */}
       <header className="mb-6 flex items-center gap-4">
         <h2 className="text-xl font-semibold">Product Catalog</h2>
@@ -113,9 +125,7 @@ export default function ProductsList({ products }: ProductsListProps) {
         )}
       </div>
 
-      <p className="text-secondary-dark mt-4 text-xs">
-        Showing {filtered.length} of {products.length} products
-      </p>
+
     </section>
   );
 }

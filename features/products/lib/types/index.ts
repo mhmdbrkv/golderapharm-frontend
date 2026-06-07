@@ -1,3 +1,5 @@
+import type { PaginatedApiResponse } from "@/lib/types";
+
 export interface ProductApiResponse {
   id: string;
   name: string;
@@ -7,12 +9,7 @@ export interface ProductApiResponse {
   updatedAt: string;
 }
 
-export interface GetProductsResponse {
-  status: string;
-  message: string;
-  results: number;
-  data: ProductApiResponse[];
-}
+export type GetProductsResponse = PaginatedApiResponse<ProductApiResponse[]>;
 
 export interface CreateProductDto {
   name: string;

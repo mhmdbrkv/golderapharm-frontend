@@ -3,13 +3,20 @@
 import { format } from "date-fns";
 import { ChevronDown, ChevronUp, Package, Users } from "lucide-react";
 import { useState } from "react";
+import Pagination from "@/components/ui/Pagination";
 import { Forecast } from "../lib/types";
 import { getPeriodBadge, getStatusBadge } from "../lib/utils/history";
 
 export default function ForecastHistory({
   forecasts,
+  page,
+  limit,
+  totalCount,
 }: {
   forecasts: Forecast[];
+  page: number;
+  limit: number;
+  totalCount: number;
 }) {
   const [expandedForecasts, setExpandedForecasts] = useState<Set<string>>(
     new Set(),
@@ -149,6 +156,7 @@ export default function ForecastHistory({
           )}
         </div>
       ))}
+      <Pagination page={page} limit={limit} totalCount={totalCount} />
     </main>
   );
 }

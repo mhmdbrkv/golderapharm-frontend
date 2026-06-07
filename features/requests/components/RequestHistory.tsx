@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { TRequest } from "@/features/requests/lib/types";
 import { toast } from "@/lib/utils/toast";
+import Pagination from "@/components/ui/Pagination";
 import {
   getStatusBadgeStyle,
   getResponseBgStyle,
@@ -22,6 +23,9 @@ import { format } from "date-fns";
 
 interface RequestHistoryProps {
   requests: TRequest[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
 const formatDate = (dateString: string | null) => {
@@ -92,7 +96,12 @@ const getDoctorProfileHref = (
   id: string,
 ) => `/${role}/doctors/${id}`;
 
-export default function RequestHistory({ requests }: RequestHistoryProps) {
+export default function RequestHistory({
+  requests,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
+}: RequestHistoryProps) {
   const pathname = usePathname();
   const role = getRoleFromPathname(pathname);
 
@@ -528,6 +537,12 @@ export default function RequestHistory({ requests }: RequestHistoryProps) {
               )}
           </div>
         ))}
+      </div>
+      <div className="mt-6 flex items-center justify-between">
+        <p className="text-secondary-dark text-xs">
+          Showing {requests.length} of {totalCount || requests.length} requests
+        </p>
+        <Pagination page={page} limit={limit} totalCount={totalCount || requests.length} />
       </div>
     </main>
   );

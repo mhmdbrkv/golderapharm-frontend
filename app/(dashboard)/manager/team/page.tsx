@@ -5,12 +5,14 @@ import TeamPageClient from "@/features/team/components/TeamPageClient";
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams: { openDialog?: string };
+  searchParams?: { page?: string; limit?: string; openDialog?: string };
 };
 
 export default async function Page({ searchParams }: PageProps) {
-  const { openDialog } = await searchParams;
-  const res = await getManagerTeamAction();
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const openDialog = searchParams?.openDialog === "true";
+  const res = await getManagerTeamAction(undefined, page, limit);
   const regionsRes = await getRegionsAction();
 
   return (
@@ -21,8 +23,12 @@ export default async function Page({ searchParams }: PageProps) {
       stats={
         res.stats || { totalMembers: 0, supervisorsCount: 0, repsCount: 0 }
       }
+      page={page}
+      limit={limit}
+      medicalRepsTotalCount={res.medicalRepsTotalCount ?? res.medicalReps?.length ?? 0}
+      supervisorsTotalCount={res.supervisorsTotalCount ?? res.supervisors?.length ?? 0}
       success={res.success}
-      openDialog={openDialog === "true"}
+      openDialog={openDialog}
     />
   );
 }

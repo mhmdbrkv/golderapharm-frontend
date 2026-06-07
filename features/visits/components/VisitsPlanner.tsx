@@ -13,16 +13,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import DayVisitsPanel from "@/features/visits/components/panels/DayVisitsPanel";
 import WeekVisitsPanel from "@/features/visits/components/panels/WeekVisitsPanel";
+import Pagination from "@/components/ui/Pagination";
 import { Visit } from "@/features/visits/lib/types/ui";
 
 type VisitsPlannerProps = {
   visits: Visit[];
   reportBasePath?: string;
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 export default function VisitsPlanner({
   visits,
   reportBasePath,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: VisitsPlannerProps) {
   const [mode, setMode] = useState<"day" | "week">("day");
   const [selected, setSelected] = useState<Date>(new Date());
@@ -54,7 +61,13 @@ export default function VisitsPlanner({
     <div className="grid grid-cols-[300px_1fr] gap-4">
       {/* Left: calendar + toggle */}
       <div className="flex flex-col gap-6">
+
+
+
         <div className="flex w-full items-center gap-4 text-sm/5 font-medium *:flex-1">
+          
+
+
           <Button
             size="sm"
             variant={mode === "day" ? "default" : "outline"}
@@ -72,6 +85,10 @@ export default function VisitsPlanner({
             Week
           </Button>
         </div>
+
+        
+
+
         <Card className="relative h-fit p-4 shadow-none">
           <p className="text-start text-lg/[27px] font-semibold">
             {mode === "day"
@@ -119,6 +136,7 @@ export default function VisitsPlanner({
         </Card>
       </div>
 
+
       {/* Right: data view */}
       <div className="space-y-4">
         {mode === "day" ? (
@@ -134,7 +152,16 @@ export default function VisitsPlanner({
             reportBasePath={reportBasePath}
           />
         )}
+
+                <div className="mt-6">
+          <Pagination page={page} limit={limit} totalCount={totalCount} />
+        </div>
       </div>
+
+
+  
+        
+
     </div>
   );
 }

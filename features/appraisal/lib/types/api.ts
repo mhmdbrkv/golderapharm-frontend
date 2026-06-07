@@ -1,3 +1,5 @@
+import type { PaginatedApiResponse } from "@/lib/types";
+
 /**
  * API response type for a single appraisal
  */
@@ -85,11 +87,9 @@ export interface CreateAppraisalDto {
 /**
  * Complete API response for GET /api/appraisals
  */
-export interface GetAppraisalsResponse {
-  success: boolean;
-  results: number;
-  data: AppraisalApiResponse[];
-}
+export type GetAppraisalsResponse = PaginatedApiResponse<
+  AppraisalApiResponse[]
+>;
 
 /**
  * API response for POST /api/appraisals

@@ -1,3 +1,5 @@
+import type { PaginatedApiResponse } from "@/lib/types";
+
 export interface PharmacyApiResponse {
   id: string;
   name: string;
@@ -9,12 +11,7 @@ export interface PharmacyApiResponse {
   updatedAt: string;
 }
 
-export interface GetPharmaciesResponse {
-  status: string;
-  message: string;
-  results: number;
-  data: PharmacyApiResponse[];
-}
+export type GetPharmaciesResponse = PaginatedApiResponse<PharmacyApiResponse[]>;
 
 export interface CreatePharmacyDto {
   name: string;

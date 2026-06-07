@@ -3,8 +3,14 @@ import { getVisitReportsAction } from "@/features/reports/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const result = await getVisitReportsAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const params = await searchParams;
+
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
+
+ 
+  const result = await getVisitReportsAction(page, limit);
 
   if (!result.success || !result.data) {
     return (
@@ -18,7 +24,7 @@ export default async function Page() {
     );
   }
 
-  const { reports, totalCount } = result.data;
+  const { reports, totalCount } = result.data!;
 
   return (
     <main className="flex flex-col gap-6 p-6 *:min-[1440px]:w-270.75! *:lg:w-5xl">
@@ -36,7 +42,7 @@ export default async function Page() {
           <p className="text-2xl font-semibold text-white">{totalCount}</p>
         </div>
       </header>
-      <VisitReportsList reports={reports} />
+      <VisitReportsList reports={reports} page={page} limit={limit} totalCount={totalCount} />
     </main>
   );
 }

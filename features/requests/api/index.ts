@@ -1,6 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/services/http";
+import type { PaginatedApiResponse } from "@/lib/types";
 import { ApiError } from "@/services/api-error";
 import { cookies } from "next/headers";
 import {
@@ -15,6 +16,7 @@ import {
   appendRequestFiles,
   buildCreateRequestPayload,
 } from "./request-type-payload";
+import { buildPaginationQuery } from "@/lib/utils";
 
 /**
  * Create a new request using multipart/form-data
@@ -130,46 +132,46 @@ function buildPersonalExpenseFallbackFormData(
 /**
  * Fetch all requests for current user
  */
-export async function fetchMyRequests(): Promise<{
-  results: number;
-  data: RequestApiResponse[];
-}> {
-  return apiFetch<{
-    results: number;
-    data: RequestApiResponse[];
-  }>("/api/requests", {
-    method: "GET",
-  });
+export async function fetchMyRequests(
+  page?: number,
+  limit?: number,
+): Promise<PaginatedApiResponse<RequestApiResponse[]>> {
+  return apiFetch<PaginatedApiResponse<RequestApiResponse[]>>(
+    `/api/requests${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Fetch all requests for reps under supervisor
  */
-export async function fetchSupervisorTeamRequests(): Promise<{
-  results: number;
-  data: RequestApiResponse[];
-}> {
-  return apiFetch<{
-    results: number;
-    data: RequestApiResponse[];
-  }>("/api/supervisors/team/requests", {
-    method: "GET",
-  });
+export async function fetchSupervisorTeamRequests(
+  page?: number,
+  limit?: number,
+): Promise<PaginatedApiResponse<RequestApiResponse[]>> {
+  return apiFetch<PaginatedApiResponse<RequestApiResponse[]>>(
+    `/api/supervisors/team/requests${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Fetch all requests for reps under manager
  */
-export async function fetchManagerTeamRequests(): Promise<{
-  results: number;
-  data: RequestApiResponse[];
-}> {
-  return apiFetch<{
-    results: number;
-    data: RequestApiResponse[];
-  }>("/api/managers/team/requests", {
-    method: "GET",
-  });
+export async function fetchManagerTeamRequests(
+  page?: number,
+  limit?: number,
+): Promise<PaginatedApiResponse<RequestApiResponse[]>> {
+  return apiFetch<PaginatedApiResponse<RequestApiResponse[]>>(
+    `/api/managers/team/requests${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -279,13 +281,14 @@ export async function createRequestAction(
 /**
  * Server action to get user's requests
  */
-export async function getMyRequestsAction() {
+export async function getMyRequestsAction(page?: number, limit?: number) {
   try {
-    const requests = await fetchMyRequests();
+    const requests = await fetchMyRequests(page, limit);
     if (!requests.data || requests.results === 0) {
       return {
         success: true,
         data: [] as TRequest[],
+        totalCount: requests.results ?? 0,
       };
     }
     // Transform API response to frontend format
@@ -297,6 +300,7 @@ export async function getMyRequestsAction() {
     return {
       success: true,
       data: transformedData,
+      totalCount: requests.results ?? transformedData.length,
     };
   } catch (error) {
     console.error("Requests fetch error:", error);
@@ -340,14 +344,18 @@ export async function updateRequestAction(id: string, data: UpdateRequestDto) {
 /**
  * Server action to get supervisor's team requests
  */
-export async function getSupervisorTeamRequestsAction() {
+export async function getSupervisorTeamRequestsAction(
+  page?: number,
+  limit?: number,
+) {
   try {
-    const requests = await fetchSupervisorTeamRequests();
+    const requests = await fetchSupervisorTeamRequests(page, limit);
 
     if (!requests.data || requests.results === 0) {
       return {
         success: true,
         data: [] as TRequest[],
+        totalCount: requests.results ?? 0,
       };
     }
     // Transform API response to frontend format and assign belongsTo as "rep"
@@ -359,6 +367,7 @@ export async function getSupervisorTeamRequestsAction() {
     return {
       success: true,
       data: transformedData,
+      totalCount: requests.results ?? transformedData.length,
     };
   } catch (error) {
     console.error("Supervisor team requests fetch error:", error);
@@ -378,14 +387,18 @@ export async function getSupervisorTeamRequestsAction() {
 /**
  * Server action to get manager's team requests
  */
-export async function getManagerTeamRequestsAction() {
+export async function getManagerTeamRequestsAction(
+  page?: number,
+  limit?: number,
+) {
   try {
-    const requests = await fetchManagerTeamRequests();
+    const requests = await fetchManagerTeamRequests(page, limit);
 
     if (!requests || requests.data.length === 0 || requests.results === 0) {
       return {
         success: true,
         data: [] as TRequest[],
+        totalCount: requests.results ?? 0,
       };
     }
     // Transform API response to frontend format and assign belongsTo as "rep"
@@ -396,6 +409,7 @@ export async function getManagerTeamRequestsAction() {
     return {
       success: true,
       data: transformedData,
+      totalCount: requests.results ?? transformedData.length,
     };
   } catch (error) {
     console.error("Manager team requests fetch error:", error);

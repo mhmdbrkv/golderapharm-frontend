@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/utils/toast";
+import Pagination from "@/components/ui/Pagination";
 import SupervisorPlanCard from "./SupervisorPlanCard";
 import SupervisorOwnPlanCard from "./SupervisorOwnPlanCard";
 import { Plan, VisitPlan } from "@/features/plan/api/get";
@@ -14,6 +15,9 @@ import {
 type SupervisorPlansListProps = {
   repPlans: VisitPlan[];
   myPlans: Plan[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 type TabType = "repPlans" | "myPlans";
@@ -21,6 +25,9 @@ type TabType = "repPlans" | "myPlans";
 export default function SupervisorPlansList({
   repPlans,
   myPlans,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: SupervisorPlansListProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("repPlans");
@@ -71,6 +78,10 @@ export default function SupervisorPlansList({
 
   return (
     <div className="border-secondary-light mt-6 rounded-[14px] border-[0.8px] bg-white p-6">
+
+            <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
       <div className="flex w-fit items-center gap-2 rounded-[14px] bg-[#F1F5F9] p-1">
         {tabs.map((tab) => (
           <button
@@ -118,6 +129,8 @@ export default function SupervisorPlansList({
           ))
         )}
       </div>
+
+
     </div>
   );
 }

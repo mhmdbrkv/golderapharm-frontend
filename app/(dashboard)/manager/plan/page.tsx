@@ -3,8 +3,10 @@ import { getManagerPlansAction } from "@/features/plan/api/get";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const plansResult = await getManagerPlansAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const plansResult = await getManagerPlansAction(page, limit);
 
   if (!plansResult.success || !plansResult.data) {
     return (
@@ -27,7 +29,12 @@ export default async function Page() {
         </p>
       </header>
 
-      <ManagerPlansList plans={plansResult.data} />
+      <ManagerPlansList
+        plans={plansResult.data}
+        page={page}
+        limit={limit}
+        totalCount={plansResult.totalCount ?? plansResult.data.length}
+      />
     </main>
   );
 }

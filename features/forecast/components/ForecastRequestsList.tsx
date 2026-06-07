@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import type { ForecastManagement } from "../lib/types/management";
+import Pagination from "@/components/ui/Pagination";
 import { updateForecastAction } from "../api/management";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,8 +29,14 @@ import { useRouter } from "next/navigation";
 
 export default function ForecastRequestsList({
   forecasts,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: {
   forecasts: ForecastManagement[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }) {
     const router = useRouter();
   const [expandedForecasts, setExpandedForecasts] = useState<Set<string>>(
@@ -164,11 +171,19 @@ export default function ForecastRequestsList({
   return (
     <>
       <main className="space-y-6">
+
+
         {forecasts.map((forecast) => (
           <div
             key={forecast.id}
             className="border-secondary-light rounded-[14px] border-[0.8px] bg-white p-6"
           >
+
+            
+                  <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
+
             <header className="mb-4 flex items-start justify-between">
               <div>
                 <div className="mb-2 flex items-center gap-3">
@@ -313,6 +328,8 @@ export default function ForecastRequestsList({
           </div>
         ))}
       </main>
+
+
 
       <Dialog open={dialogState.open} onOpenChange={closeDialog}>
         <DialogContent>

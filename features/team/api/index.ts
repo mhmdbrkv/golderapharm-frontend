@@ -2,7 +2,7 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
-import { formatDateOnly } from "@/lib/utils";
+import { buildPaginationQuery, formatDateOnly } from "@/lib/utils";
 import {
   AddMemberFormData,
   User,
@@ -20,10 +20,15 @@ import { transformUserApiResponse } from "../lib/utils";
  */
 export async function getManagerTeam(
   role: "MEDICAL_REP" | "SUPERVISOR",
+  page?: number,
+  limit?: number,
 ): Promise<ManagerTeamResponse> {
-  return apiFetch<ManagerTeamResponse>(`/api/managers/team?role=${role}`, {
-    method: "GET",
-  });
+  return apiFetch<ManagerTeamResponse>(
+    `/api/managers/team?role=${role}${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -33,11 +38,29 @@ export async function getManagerTeam(
  */
 export async function getManagerTeamAction(
   role?: "MEDICAL_REP" | "SUPERVISOR",
-) {
+  page?: number,
+  limit?: number,
+): Promise<{
+  success: boolean;
+  medicalReps?: User[];
+  supervisors?: User[];
+  stats?: {
+    totalMembers: number;
+    supervisorsCount: number;
+    repsCount: number;
+  };
+  medicalRepsTotalCount?: number;
+  supervisorsTotalCount?: number;
+  error?: {
+    code: string;
+    message: string;
+    statusCode?: number;
+  };
+}> {
   try {
     // If role is specified, fetch only that role
     if (role) {
-      const response = await getManagerTeam(role);
+      const response = await getManagerTeam(role, page, limit);
       const members: User[] = response.data.map((member) =>
         transformUserApiResponse(member),
       );
@@ -47,6 +70,14 @@ export async function getManagerTeamAction(
         ...(role === "MEDICAL_REP"
           ? { medicalReps: members, supervisors: [] }
           : { medicalReps: [], supervisors: members }),
+        medicalRepsTotalCount:
+          role === "MEDICAL_REP"
+            ? (response.results ?? response.data.length)
+            : 0,
+        supervisorsTotalCount:
+          role === "SUPERVISOR"
+            ? (response.results ?? response.data.length)
+            : 0,
         stats: {
           supervisorsCount:
             role === "SUPERVISOR" ? response.supervisorsCount : 0,
@@ -59,8 +90,8 @@ export async function getManagerTeamAction(
 
     // Fetch both medical reps and supervisors
     const [repsResponse, supervisorsResponse] = await Promise.all([
-      getManagerTeam("MEDICAL_REP"),
-      getManagerTeam("SUPERVISOR"),
+      getManagerTeam("MEDICAL_REP", page, limit),
+      getManagerTeam("SUPERVISOR", page, limit),
     ]);
 
     // Transform API response to User format
@@ -76,6 +107,9 @@ export async function getManagerTeamAction(
       success: true,
       medicalReps,
       supervisors,
+      medicalRepsTotalCount: repsResponse.results ?? repsResponse.data.length,
+      supervisorsTotalCount:
+        supervisorsResponse.results ?? supervisorsResponse.data.length,
       stats: {
         totalMembers:
           (repsResponse.data.length || 0) +
@@ -101,10 +135,16 @@ export async function getManagerTeamAction(
 /**
  * Get supervisor's team (Medical Reps only)
  */
-export async function getSupervisorTeam(): Promise<SupervisorTeamResponse> {
-  return apiFetch<SupervisorTeamResponse>("/api/supervisors/team", {
-    method: "GET",
-  });
+export async function getSupervisorTeam(
+  page?: number,
+  limit?: number,
+): Promise<SupervisorTeamResponse> {
+  return apiFetch<SupervisorTeamResponse>(
+    `/api/supervisors/team${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -112,20 +152,27 @@ export async function getSupervisorTeam(): Promise<SupervisorTeamResponse> {
  * ! This action is used in the coaching feature to fetch medical reps for joint visit reviews
  * ! used in plan creation for supervisors
  */
-export async function getSupervisorTeamAction() {
+export async function getSupervisorTeamAction(page?: number, limit?: number) {
   try {
-    const response = await getSupervisorTeam();
+    const response = await getSupervisorTeam(page, limit);
 
     // Transform API response to User format
-    const members: User[] = response.data.data.map((member) =>
+    const membersData = Array.isArray(response.data)
+      ? response.data
+      : response.data || [];
+
+    const members: User[] = membersData.map((member) =>
       transformUserApiResponse(member),
     );
+
+    const results = typeof response.results === "number" ? response.results : 0;
 
     return {
       success: true,
       members,
+      totalCount: results,
       stats: {
-        results: response.data.results,
+        results,
       },
     };
   } catch (error) {

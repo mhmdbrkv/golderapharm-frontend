@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Pagination from "@/components/ui/Pagination";
 import { AppraisalFilters } from "./AppraisalFilters";
 import { ReviewsList } from "./ReviewsList";
 import { StatCards } from "@/core/ui/StatCards";
@@ -9,6 +10,9 @@ import type { Review } from "../lib/types";
 
 type AppraisalContentProps = {
   reviews: Review[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
   stats: {
     avgScore: number;
     excellentCount: number;
@@ -17,7 +21,13 @@ type AppraisalContentProps = {
   };
 };
 
-export function AppraisalContent({ reviews, stats }: AppraisalContentProps) {
+export function AppraisalContent({
+  reviews,
+  stats,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
+}: AppraisalContentProps) {
   const [period, setPeriod] = useState<string>("all");
   const [location, setLocation] = useState<string>("all");
   const [tab, setTab] = useState<"all" | "supervisors" | "reps">("all");
@@ -69,6 +79,9 @@ export function AppraisalContent({ reviews, stats }: AppraisalContentProps) {
           onChangeQuery={setQuery}
         />
         <ReviewsList reviews={visible} />
+        <div className="mt-4">
+          <Pagination page={page} limit={limit} totalCount={totalCount} />
+        </div>
       </main>
     </>
   );

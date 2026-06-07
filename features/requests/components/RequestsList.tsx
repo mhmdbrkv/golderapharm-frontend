@@ -6,14 +6,22 @@ import RequestCard from "@/features/requests/components/RequestCard";
 import { UserRole } from "@/lib/types";
 import { TbelongToWho, TRequest } from "@/features/requests/lib/types";
 
+import Pagination from "@/components/ui/Pagination";
+
 interface RequestsListProps {
   requestsData: TRequest[];
   role: UserRole;
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
 export default function RequestsList({
   requestsData,
   role,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: RequestsListProps) {
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -83,12 +91,19 @@ export default function RequestsList({
             <RequestCard key={request.id} request={request} role={role} />
           ))}
         </div>
+        <div className="mt-4">
+          <Pagination page={page} limit={limit} totalCount={totalCount} />
+        </div>
       </main>
     );
 
   if (role === "SUPERVISOR")
     return (
       <main className="border-secondary-light flex flex-col gap-7.5 rounded-[14px] border bg-white p-6">
+                <div className="mt-4">
+          <Pagination page={page} limit={limit} totalCount={totalCount} />
+        </div>
+        
         <section className="flex items-center">
           <h3 className="text-base/4 font-normal text-black">
             {tab === "me" ? "My Requests" : "Reps Requests"}
@@ -163,6 +178,7 @@ export default function RequestsList({
             </div>
           )}
         </div>
+
       </main>
     );
 }

@@ -14,6 +14,9 @@ import {
 
 interface VisitReportsListProps {
   reports: VisitReport[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
 const getRatingStars = (rating: string) => {
@@ -28,7 +31,9 @@ const getRatingColor = (rating: string) => {
   return "text-dashboard-red";
 };
 
-export default function VisitReportsList({ reports }: VisitReportsListProps) {
+import Pagination from "@/components/ui/Pagination";
+
+export default function VisitReportsList({ reports, page = 1, limit = 10, totalCount = 0 }: VisitReportsListProps) {
   if (reports.length === 0) {
     return (
       <Card className="border-secondary-light flex flex-col items-center justify-center rounded-[25px] border bg-white p-12 shadow-none">
@@ -44,12 +49,24 @@ export default function VisitReportsList({ reports }: VisitReportsListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4"> 
+
+      {typeof totalCount === "number" && (
+        <div className="mt-4">
+          <Pagination page={page} limit={limit} totalCount={totalCount} />
+        </div>
+      )}
+
+
       {reports.map((report) => (
+
+        
         <Card
           key={report.id}
           className="border-secondary-light rounded-[25px] border bg-white p-6 shadow-none transition-all hover:shadow-md"
         >
+
+          
           <div className="space-y-4">
             {/* Header with Doctor Info */}
             <div className="flex items-start justify-between">
@@ -58,9 +75,9 @@ export default function VisitReportsList({ reports }: VisitReportsListProps) {
                   <Stethoscope className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-base font-medium text-black">
+                  {/* <h3 className="text-base font-medium text-black">
                     {report.doctorNameAR} - {report.doctorNameEN}
-                  </h3>
+                  </h3> */}
                   <p className="text-secondary-dark text-sm">
                     Visit ID: {report.visitId}
                   </p>
@@ -195,6 +212,11 @@ export default function VisitReportsList({ reports }: VisitReportsListProps) {
           </div>
         </Card>
       ))}
-    </div>
+   
+
+
+
+      </div>
+      
   );
 }

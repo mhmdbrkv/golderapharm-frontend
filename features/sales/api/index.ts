@@ -15,6 +15,12 @@ function buildSalesQueryString(params?: SalesQueryParams) {
   if (params.sheetName) {
     query.set("sheetName", params.sheetName);
   }
+  if (typeof params.page !== "undefined") {
+    query.set("page", String(params.page));
+  }
+  if (typeof params.limit !== "undefined") {
+    query.set("limit", String(params.limit));
+  }
 
   const qs = query.toString();
   return qs ? `?${qs}` : "";

@@ -9,18 +9,22 @@ type PageProps = {
     repId?: string;
     date?: string;
     sheetName?: string;
+    page?: string;
+    limit?: string;
   };
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function Page({ searchParams }: PageProps) {
-  const { repId, date, sheetName } = await searchParams;
+  const { repId, date, sheetName, page: pageStr, limit: limitStr } = await searchParams;
+  const page = pageStr ? Number(pageStr) : 1;
+  const limit = limitStr ? Number(limitStr) : 10;
 
   const [result, repsRes] = await Promise.all([
     repId
-      ? getManagerRepSalesAction(repId, { date, sheetName })
-      : getSalesAction({ date, sheetName }),
+      ? getManagerRepSalesAction(repId, { date, sheetName, page, limit })
+      : getSalesAction({ date, sheetName, page, limit }),
     getManagerTeamAction("MEDICAL_REP"),
   ]);
 
@@ -29,6 +33,8 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const sales = extractSales(result.data);
+  const raw = result.data as any;
+  const totalCount = (raw && (raw.results || raw.length)) || sales.length;
   const repOptions = (repsRes.medicalReps ?? []).map((rep) => ({
     id: rep.id,
     name: rep.name,
@@ -43,7 +49,7 @@ export default async function Page({ searchParams }: PageProps) {
         selectedDate={date}
         selectedSheetName={sheetName}
       />
-      <SalesTable sales={sales} />
+      <SalesTable sales={sales} page={page} limit={limit} totalCount={totalCount} />
     </main>
   );
 }

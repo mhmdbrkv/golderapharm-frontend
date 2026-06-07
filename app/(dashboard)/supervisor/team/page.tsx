@@ -3,8 +3,12 @@ import SupervisorTeamList from "@/features/team/components/profile/SupervisorTea
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const res = await getSupervisorTeamAction();
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const res = await getSupervisorTeamAction(page, limit);
+  const members = res.members ?? [];
+  const totalCount = res.totalCount ?? members.length;
 
   return (
     <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5">
@@ -18,8 +22,13 @@ export default async function Page() {
       </header>
 
       {res.success ? (
-        res.members && res.members.length > 0 ? (
-          <SupervisorTeamList members={res.members} />
+        members.length > 0 ? (
+          <SupervisorTeamList
+            members={members}
+            page={page}
+            limit={limit}
+            totalCount={totalCount}
+          />
         ) : (
           <div className="text-secondary-dark mt-8 text-center">
             No team members assigned yet

@@ -2,6 +2,13 @@
 
 import { ApiError } from "@/services/api-error";
 import { apiFetch } from "@/services/http";
+import {
+  buildPaginationQuery,
+  formatSaudiDateDisplay,
+  getSaudiDateParts,
+  getInitials,
+  parseDateValue,
+} from "@/lib/utils";
 import type {
   Review,
   AppraisalApiResponse,
@@ -9,12 +16,6 @@ import type {
   CreateAppraisalDto,
   CreateAppraisalResponse,
 } from "../lib/types";
-import {
-  formatSaudiDateDisplay,
-  getSaudiDateParts,
-  getInitials,
-  parseDateValue,
-} from "@/lib/utils";
 
 /**
  * Map API appraisal response to Review display format
@@ -133,11 +134,16 @@ function mapAppraisalToReview(appraisal: AppraisalApiResponse): Review {
 /**
  * Get all appraisals from the backend
  */
-export async function getAppraisals(): Promise<AppraisalApiResponse[]> {
-  const response = await apiFetch<GetAppraisalsResponse>("/api/appraisals", {
-    method: "GET",
-  });
-  return response.data;
+export async function getAppraisals(
+  page?: number,
+  limit?: number,
+): Promise<GetAppraisalsResponse> {
+  return apiFetch<GetAppraisalsResponse>(
+    `/api/appraisals${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -156,9 +162,13 @@ export async function createAppraisal(
 /**
  * Get all appraisal reviews
  */
-export async function getAppraisalReviews(): Promise<{
+export async function getAppraisalReviews(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
   reviews: Review[];
+  totalCount: number;
   stats: {
     avgScore: number;
     excellentCount: number;
@@ -167,7 +177,8 @@ export async function getAppraisalReviews(): Promise<{
   };
 }> {
   try {
-    const appraisals = await getAppraisals();
+    const response = await getAppraisals(page, limit);
+    const appraisals = response.data;
     const reviews = appraisals.map(mapAppraisalToReview);
 
     // Calculate stats
@@ -190,6 +201,7 @@ export async function getAppraisalReviews(): Promise<{
     return {
       success: true,
       reviews,
+      totalCount: response.results ?? reviews.length,
       stats: {
         avgScore,
         excellentCount,
@@ -206,9 +218,9 @@ export async function getAppraisalReviews(): Promise<{
 /**
  * Server action to get appraisal reviews
  */
-export async function getAppraisalReviewsAction() {
+export async function getAppraisalReviewsAction(page?: number, limit?: number) {
   try {
-    return await getAppraisalReviews();
+    return await getAppraisalReviews(page, limit);
   } catch (error) {
     const err = error as ApiError;
     return {
@@ -219,6 +231,7 @@ export async function getAppraisalReviewsAction() {
         statusCode: err.statusCode,
       },
       reviews: [],
+      totalCount: 0,
       stats: {
         avgScore: 0,
         excellentCount: 0,

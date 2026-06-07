@@ -1,3 +1,5 @@
+import type { PaginatedApiResponse } from "@/lib/types";
+
 /**
  * Types for forecast management (Manager/Supervisor)
  */
@@ -24,12 +26,9 @@ export interface ForecastManagementApiResponse {
   };
 }
 
-export interface GetAllForecastsResponse {
-  status: string;
-  message: string;
-  results: number;
-  data: ForecastManagementApiResponse[];
-}
+export type GetAllForecastsResponse = PaginatedApiResponse<
+  ForecastManagementApiResponse[]
+>;
 
 export interface ForecastManagement {
   id: string;

@@ -1,3 +1,4 @@
+import type { PaginatedApiResponse } from "@/lib/types";
 import { UserRole } from "@/lib/types";
 
 // SubRegion and Region types
@@ -178,10 +179,4 @@ export type HRStats = {
   avgVacationUsed: number;
 };
 
-// API Response type
-export type HRUsersApiResponse = {
-  status: string;
-  message: string;
-  results: number;
-  data: HRMember[];
-};
+export type HRUsersApiResponse = PaginatedApiResponse<HRMember[]>;

@@ -2,8 +2,10 @@
 
 import { apiFetch } from "@/services/http";
 import type { ApiError } from "@/services/api-error";
+import type { Pagination } from "@/lib/types";
 import { JointVisitReview, SupervisorCoachingStatsData } from "../lib/types";
 import {
+  buildPaginationQuery,
   formatSaudiDateDisplay,
   getSaudiYearMonthKey,
   parseDateValue,
@@ -47,6 +49,7 @@ type ApiResponse = {
   status: string;
   message: string;
   results: number;
+  pagination: Pagination;
   data: SupervisorCoachingReportResponse[];
 };
 
@@ -62,8 +65,12 @@ function getStatus(rating: number): "Excellent" | "Needs Improvement" {
   return rating >= 4 ? "Excellent" : "Needs Improvement";
 }
 
-export async function getSupervisorCoachingReportsAction(): Promise<{
+export async function getSupervisorCoachingReportsAction(
+  page?: number,
+  limit?: number,
+): Promise<{
   success: boolean;
+  totalCount?: number;
   data?: {
     reports: JointVisitReview[];
     stats: SupervisorCoachingStatsData;
@@ -71,9 +78,12 @@ export async function getSupervisorCoachingReportsAction(): Promise<{
   error?: ApiError;
 }> {
   try {
-    const response = await apiFetch<ApiResponse>("/api/coaching-reports", {
-      method: "GET",
-    });
+    const response = await apiFetch<ApiResponse>(
+      `/api/coaching-reports${buildPaginationQuery({ page, limit })}`,
+      {
+        method: "GET",
+      },
+    );
 
     // Map API response to JointVisitReview format
     const reports: JointVisitReview[] = response.data.map((report) => ({
@@ -122,6 +132,7 @@ export async function getSupervisorCoachingReportsAction(): Promise<{
 
     return {
       success: true,
+      totalCount: response.results,
       data: { reports, stats },
     };
   } catch (error) {

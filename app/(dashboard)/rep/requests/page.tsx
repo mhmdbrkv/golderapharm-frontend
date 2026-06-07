@@ -9,10 +9,20 @@ import { getRegionsAction } from "@/lib/requests/regions";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
+type PageProps = {
+  searchParams?: { page?: string; limit?: string };
+};
+
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
+
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
+
+ 
   const [requestsResult, doctorsResult, productsResult, profile] =
     await Promise.all([
-      getMyRequestsAction(),
+      getMyRequestsAction(page, limit),
       getDoctorsAction(),
       getProductsAction(),
       fetchProfile().catch(() => null),
@@ -36,6 +46,9 @@ export default async function Page() {
   }
 
   const requests = requestsResult.success ? (requestsResult.data ?? []) : [];
+  const requestsTotalCount = requestsResult.success
+    ? requestsResult.totalCount ?? requests.length
+    : 0;
 
   const allDoctors = doctorsResult.success
     ? (doctorsResult.data ?? [])
@@ -44,7 +57,7 @@ export default async function Page() {
     ? allDoctors.filter((d) => d.subRegion === userSubRegionName)
     : allDoctors;
   const products = productsResult.success
-    ? (productsResult?.data?.data ?? [])
+    ? (productsResult.data ?? [])
     : [];
 
      
@@ -77,9 +90,14 @@ export default async function Page() {
           pending={pending}
           approved={approved}
           rejected={rejected}
-        />  
-        <SubmitRequestForm doctors={doctors} products={ products as []} />
-        <RequestHistory requests={requests} />
+        />
+        <SubmitRequestForm doctors={doctors} products={products as []} />
+        <RequestHistory
+          requests={requests}
+          page={page}
+          limit={limit}
+          totalCount={requestsTotalCount}
+        />
       </section>
     </main>
   );

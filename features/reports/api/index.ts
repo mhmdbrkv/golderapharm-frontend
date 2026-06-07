@@ -2,27 +2,61 @@
 
 import { apiFetch } from "@/services/http";
 import { ApiError } from "@/services/api-error";
+import { buildPaginationQuery } from "@/lib/utils";
 import { format } from "date-fns";
-import { VisitReportsResponse, VisitReport } from "../lib/types";
+import {
+  VisitReportsResponse,
+  VisitReport,
+  VisitReportApiResponse,
+} from "../lib/types";
 
 type VisitReportsScope = "own" | "all";
 
-function normalizeVisitReportsResponse(response: VisitReportsResponse) {
+type VisitReportsActionResult = {
+  success: boolean;
+  data?: {
+    reports: VisitReport[];
+    totalCount: number;
+  };
+  error?: {
+    code: string;
+    message: string;
+    statusCode?: number;
+  };
+};
+
+function normalizeVisitReportsResponse(response: VisitReportsResponse): {
+  reports: VisitReportApiResponse[];
+  totalCount: number;
+} {
+  // Case: response.data is an object containing { data: [], results }
+  type NestedPaginated = { data: VisitReportApiResponse[]; results: number };
+
   if (
+    response &&
+    typeof response === "object" &&
     "data" in response &&
-    "data" in response.data &&
-    "results" in response.data
+    response.data &&
+    typeof response.data === "object" &&
+    "data" in (response.data as object) &&
+    "results" in (response.data as object)
   ) {
+    const nested = response.data as unknown as NestedPaginated;
     return {
-      reports: response.data.data,
-      totalCount: response.data.results,
+      reports: nested.data || [],
+      totalCount: nested.results || 0,
     };
   }
 
-  if ("data" in response && Array.isArray(response.data)) {
+  // Case: response follows PaginatedApiResponse<T> where data is the array and results is top-level
+  if (
+    response &&
+    typeof response === "object" &&
+    Array.isArray(response.data)
+  ) {
     return {
       reports: response.data,
-      totalCount: response.data.length,
+      totalCount: response.results ?? response.data.length,
     };
   }
 
@@ -37,11 +71,13 @@ function normalizeVisitReportsResponse(response: VisitReportsResponse) {
  */
 export async function getVisitReports(
   scope: VisitReportsScope = "own",
+  page?: number,
+  limit?: number,
 ): Promise<VisitReportsResponse> {
   const endpoint =
     scope === "all"
-      ? "/api/visits/all-visit-reports"
-      : "/api/visits/visit-reports";
+      ? `/api/visits/all-visit-reports${buildPaginationQuery({ page, limit })}`
+      : `/api/visits/visit-reports${buildPaginationQuery({ page, limit })}`;
 
   return apiFetch<VisitReportsResponse>(endpoint, {
     method: "GET",
@@ -52,9 +88,12 @@ export async function getVisitReports(
  * Server action to get all visit reports
  * Used in manager, supervisor, and rep reports pages
  */
-export async function getVisitReportsAction() {
+export async function getVisitReportsAction(
+  page?: number,
+  limit?: number,
+): Promise<VisitReportsActionResult> {
   try {
-    const response = await getVisitReports();
+    const response = await getVisitReports("own", page, limit);
     const normalized = normalizeVisitReportsResponse(response);
 
     // Transform API response to client-friendly format
@@ -78,7 +117,7 @@ export async function getVisitReportsAction() {
       success: true,
       data: {
         reports,
-        totalCount: normalized.totalCount,
+        totalCount: (normalized.totalCount as number) || 0,
       },
     };
   } catch (error) {
@@ -96,9 +135,12 @@ export async function getVisitReportsAction() {
   }
 }
 
-export async function getAllVisitReportsAction() {
+export async function getAllVisitReportsAction(
+  page?: number,
+  limit?: number,
+): Promise<VisitReportsActionResult> {
   try {
-    const response = await getVisitReports("all");
+    const response = await getVisitReports("all", page, limit);
     const normalized = normalizeVisitReportsResponse(response);
 
     const reports: VisitReport[] = normalized.reports.map((report) => ({
@@ -121,7 +163,7 @@ export async function getAllVisitReportsAction() {
       success: true,
       data: {
         reports,
-        totalCount: normalized.totalCount,
+        totalCount: (normalized.totalCount as number) || 0,
       },
     };
   } catch (error) {

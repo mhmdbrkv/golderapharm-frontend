@@ -9,8 +9,14 @@ import ForecastHistory from "@/features/forecast/components/ForecastHistory";
 
 export default function ForecastManagement({
   forecasts,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: {
   forecasts: Forecast[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"create" | "history">("create");
@@ -78,9 +84,15 @@ export default function ForecastManagement({
             </div>
           </>
         ) : (
-          <ForecastHistory forecasts={forecasts} />
+          <ForecastHistory
+            forecasts={forecasts}
+            page={page}
+            limit={limit}
+            totalCount={totalCount}
+          />
         )}
       </div>
     </main>
   );
 }
+

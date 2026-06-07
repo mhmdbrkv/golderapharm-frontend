@@ -3,17 +3,26 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/utils/toast";
+import Pagination from "@/components/ui/Pagination";
 import type { VisitPlan } from "@/features/plan/api/get";
 import { updatePlanStatusAction } from "@/features/plan/api/handle";
 import SupervisorPlanCard from "@/features/plan/components/supervisor/SupervisorPlanCard";
 
 type ManagerPlansListProps = {
   plans: VisitPlan[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 type TabType = "all" | "PENDING" | "APPROVED" | "REJECTED";
 
-export default function ManagerPlansList({ plans }: ManagerPlansListProps) {
+export default function ManagerPlansList({
+  plans,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
+}: ManagerPlansListProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("PENDING");
   const [isPending, startTransition] = useTransition();
@@ -77,6 +86,9 @@ export default function ManagerPlansList({ plans }: ManagerPlansListProps) {
 
   return (
     <div className="border-secondary-light mt-6 rounded-[14px] border-[0.8px] bg-white p-6">
+            <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
       <div className="flex w-fit items-center gap-2 rounded-[14px] bg-[#F1F5F9] p-1">
         {tabs.map((tab) => (
           <button
@@ -115,6 +127,8 @@ export default function ManagerPlansList({ plans }: ManagerPlansListProps) {
           ))
         )}
       </div>
+
+
     </div>
   );
 }

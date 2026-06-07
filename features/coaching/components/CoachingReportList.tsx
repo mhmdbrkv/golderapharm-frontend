@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Pagination from "@/components/ui/Pagination";
 import CoachingReportCard from "./CoachingReportCard";
 import SegmentedButton from "./ui/SegmentedButton";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -11,11 +12,17 @@ type FilterKey = "all" | "pending" | "completed";
 type CoachingReportListProps = {
   reports: CoachingReport[];
   isRep?: boolean;
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 };
 
 export default function CoachingReportList({
   reports,
   isRep = false,
+  page = 1,
+  limit = 10,
+  totalCount = 0,
 }: CoachingReportListProps) {
   const [filter, setFilter] = useState<FilterKey>("all");
 
@@ -36,6 +43,9 @@ export default function CoachingReportList({
 
   return (
     <Card className="border-secondary-light border p-6 shadow-none">
+            <div className="mt-6">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
       {/* Segmented filter */}
       <CardHeader className="m-0 flex w-[430px] items-center gap-1 rounded-full bg-[#F1F5F9] p-1">
         <SegmentedButton
@@ -64,6 +74,7 @@ export default function CoachingReportList({
           <CoachingReportCard key={r.id} report={r} isRep={isRep} />
         ))}
       </div>
+
     </Card>
   );
 }

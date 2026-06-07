@@ -3,9 +3,11 @@ import { getAllForecastsAction } from "@/features/forecast/api/management";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const result = await getAllForecastsAction();
- 
+export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const result = await getAllForecastsAction(page, limit);
+
   if (!result.success || !result.data) {
     return (
       <main className="flex flex-col gap-6 p-6 *:min-[1440px]:w-270.75! *:lg:w-5xl">
@@ -36,7 +38,12 @@ export default async function Page() {
           <p className="text-2xl font-semibold text-white">{results}</p>
         </div>
       </header>
-      <ForecastRequestsList forecasts={data} />
+      <ForecastRequestsList
+        forecasts={data}
+        page={page}
+        limit={limit}
+        totalCount={result.totalCount ?? results}
+      />
     </main>
   );
 }

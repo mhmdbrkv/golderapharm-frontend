@@ -1,9 +1,11 @@
 "use server";
 
 import { apiFetch } from "@/services/http";
+import type { Pagination } from "@/lib/types";
 import { ApiError } from "@/services/api-error";
 import { CoachingReport } from "../lib/types";
 import {
+  buildPaginationQuery,
   formatSaudiDateDisplay,
   getSaudiYearMonthKey,
   parseDateValue,
@@ -48,8 +50,27 @@ type GetRepCoachingReportsResponse = {
   status: string;
   message: string;
   results: number;
+  pagination: Pagination;
   data: CoachingReportApiResponse[];
 };
+
+type RepCoachingReportsActionResult =
+  | {
+      success: true;
+      reports: CoachingReport[];
+      totalCount: number;
+      stats: {
+        totalReports: number;
+        pendingComments: number;
+        averageRating: number;
+        thisMonth: number;
+      };
+      error?: ApiError;
+    }
+  | {
+      success: false;
+      error: ApiError;
+    };
 
 type AddRepCommentDto = {
   comment: string;
@@ -58,10 +79,16 @@ type AddRepCommentDto = {
 /**
  * Fetch coaching reports for the logged-in rep
  */
-export async function getRepCoachingReports(): Promise<GetRepCoachingReportsResponse> {
-  return apiFetch<GetRepCoachingReportsResponse>("/api/coaching-reports/rep", {
-    method: "GET",
-  });
+export async function getRepCoachingReports(
+  page?: number,
+  limit?: number,
+): Promise<GetRepCoachingReportsResponse> {
+  return apiFetch<GetRepCoachingReportsResponse>(
+    `/api/coaching-reports/rep${buildPaginationQuery({ page, limit })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -81,9 +108,12 @@ export async function addRepComment(
  * Server action to get coaching reports for rep
  * ! This action is used in the rep coaching dashboard
  */
-export async function getRepCoachingReportsAction() {
+export async function getRepCoachingReportsAction(
+  page?: number,
+  limit?: number,
+): Promise<RepCoachingReportsActionResult> {
   try {
-    const response = await getRepCoachingReports();
+    const response = await getRepCoachingReports(page, limit);
 
     // Map API response to CoachingReport type
     const reports: CoachingReport[] = response.data.map((report) => {
@@ -131,6 +161,7 @@ export async function getRepCoachingReportsAction() {
     return {
       success: true,
       reports,
+      totalCount: response.results,
       stats: {
         totalReports: response.results,
         pendingComments: response.data.filter((r) => !r.repComment).length,

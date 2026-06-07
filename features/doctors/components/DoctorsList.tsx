@@ -14,13 +14,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import Pagination from "@/components/ui/Pagination";
+
 interface DoctorsListProps {
   doctors?: DoctorApiResponse[];
+  page?: number;
+  limit?: number;
+  totalCount?: number;
 }
 
-export default function DoctorsList({ doctors = [] }: DoctorsListProps) {
+
+export default function DoctorsList({ doctors = [], page = 1, limit = 10, totalCount = 0  }: DoctorsListProps) {
   const [region, setRegion] = useState<string>("All Regions");
   const [q, setQ] = useState("");
+
 
   // Map API response to UI data format using mapper
   const doctorsData: DoctorCardData[] = useMemo(() => {
@@ -47,6 +54,11 @@ export default function DoctorsList({ doctors = [] }: DoctorsListProps) {
 
   return (
     <section className="border-secondary-light mt-6 rounded-[14px] border-[.8px] bg-white p-6 min-[1440px]:w-270.75! lg:w-5xl">
+      
+      <div className="mt-4">
+        <Pagination page={page} limit={limit} totalCount={totalCount} />
+      </div>
+
       <header className="mb-6 flex items-center justify-start gap-4">
         <h2 className="text-xl font-semibold">Doctor Directory</h2>
         <Select value={region} onValueChange={(v) => setRegion(v)}>
@@ -83,6 +95,7 @@ export default function DoctorsList({ doctors = [] }: DoctorsListProps) {
           </div>
         )}
       </section>
+
     </section>
   );
 }
