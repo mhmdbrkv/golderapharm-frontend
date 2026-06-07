@@ -8,11 +8,7 @@ import { DoctorApiResponse } from "../lib/types/api";
 import { useMemo } from "react";
 import type { StatCardConfig } from "@/core/ui/stat-card-types";
 
-interface DoctorsHeaderProps {
-  doctors?: DoctorApiResponse[];
-}
-
-export default function DoctorsHeader({ doctors = [] }: DoctorsHeaderProps) {
+export default function DoctorsHeader({ doctors = [] } : { doctors: DoctorApiResponse[]}) {
   const { features, role } = useRoleUI();
 
   // Determine add doctor link based on role
