@@ -1,0 +1,23 @@
+import SalesHeader from "@/features/sales/components/SalesHeader";
+import SalesTable from "@/features/sales/components/SalesTable";
+import { getSalesAction } from "@/features/sales/api";
+import { extractSales } from "@/features/sales/lib/utils";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const result = await getSalesAction();
+
+  if (!result.success) {
+    throw new Error(result.error?.message || "Failed to fetch sales");
+  }
+
+  const sales = extractSales(result.data);
+
+  return (
+    <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 *:min-[1440px]:w-270.75! lg:w-5xl">
+      <SalesHeader sales={sales} />
+      <SalesTable sales={sales} />
+    </main>
+  );
+}
