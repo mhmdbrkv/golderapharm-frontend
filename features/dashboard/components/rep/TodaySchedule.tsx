@@ -96,7 +96,7 @@ export default function TodaySchedule({ visits }: TodayScheduleProps) {
                     isCompleted ? "bg-dashboard-green" : "bg-dashboard-blue"
                   } text-sm/6 font-normal text-white`}
                 >
-                  {initials}
+                  {displayName} 
                 </div>
                 <div className="flex-1">
                   <h3 className="text-sm/5 font-normal text-black">
