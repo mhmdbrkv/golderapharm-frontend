@@ -38,13 +38,13 @@ export default async function Page() {
   const requests = requestsResult.success ? (requestsResult.data ?? []) : [];
 
   const allDoctors = doctorsResult.success
-    ? (doctorsResult.data?.doctors ?? [])
+    ? (doctorsResult.data ?? [])
     : [];
   const doctors = userSubRegionName
     ? allDoctors.filter((d) => d.subRegion === userSubRegionName)
     : allDoctors;
   const products = productsResult.success
-    ? (productsResult.data?.data ?? [])
+    ? (productsResult.data ?? [])
     : [];
 
   // Calculate stats from requests
@@ -75,8 +75,8 @@ export default async function Page() {
           pending={pending}
           approved={approved}
           rejected={rejected}
-        />
-        <SubmitRequestForm doctors={doctors} products={products} />
+        />  
+        <SubmitRequestForm doctors={doctors} products={ products as []} />
         <RequestHistory requests={requests} />
       </section>
     </main>
