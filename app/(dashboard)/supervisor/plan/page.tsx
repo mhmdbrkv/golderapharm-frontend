@@ -1,10 +1,7 @@
 import PlanStats from "@/features/plan/components/PlanStats";
 import CreatePlanDialogSupervisor from "@/features/plan/components/supervisor/CreatePlanDialogSupervisor";
 import SupervisorPlansList from "@/features/plan/components/supervisor/SupervisorPlansList";
-import {
-  mockSupervisorPlans,
-  mockSupervisorOwnPlans,
-} from "@/features/plan/lib/data";
+import { getSupervisorPlansAction } from "@/features/plan/api/get";
 import { calculateSupervisorPlanStats } from "@/features/plan/lib/utils";
 import { fetchProfile } from "@/features/profile/api";
 import { getRegionsAction } from "@/lib/requests/regions";
@@ -12,10 +9,11 @@ import { getRegionsAction } from "@/lib/requests/regions";
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const stats = calculateSupervisorPlanStats(mockSupervisorPlans);
+  const [plansResult, profile] = await Promise.all([
+    getSupervisorPlansAction(),
+    fetchProfile().catch(() => null),
+  ]);
 
-  // Fetch user profile and resolve subRegion name for doctor filtering
-  const profile = await fetchProfile().catch(() => null);
   let userSubRegionName: string | null = null;
   if (profile && profile.role !== "MANAGER" && profile.subRegionId) {
     const regionsResult = await getRegionsAction();
@@ -31,6 +29,20 @@ export default async function Page() {
       }
     }
   }
+
+  if (!plansResult.success || !plansResult.repPlans) {
+    return (
+      <main className="bg-secondary-very-light p-6 *:min-[1440px]:w-270.75! lg:w-5xl">
+        <div className="text-dashboard-red flex items-center justify-center rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm">
+            {plansResult.error?.message || "Failed to load plans"}
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const stats = calculateSupervisorPlanStats(plansResult.repPlans);
 
   return (
     <main className="bg-secondary-very-light p-6 *:min-[1440px]:w-270.75! lg:w-5xl">
@@ -48,8 +60,8 @@ export default async function Page() {
       </header>
       <PlanStats data={stats} />
       <SupervisorPlansList
-        repPlans={mockSupervisorPlans}
-        myPlans={mockSupervisorOwnPlans}
+        repPlans={plansResult.repPlans}
+        myPlans={plansResult.myPlans ?? []}
       />
     </main>
   );

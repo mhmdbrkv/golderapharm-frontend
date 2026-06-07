@@ -4,6 +4,7 @@ import { apiFetch } from "@/services/http";
 import type { ApiError } from "@/services/api-error";
 import { PlanStatus, VisitPlanType } from "@/lib/types";
 import { format } from "date-fns";
+import { fetchProfile } from "@/features/profile/api";
 
 // API Response Types
 export type PlanApiResponse = {
@@ -150,6 +151,26 @@ function mapApiResponseToVisitPlan(apiPlan: PlanApiResponse): VisitPlan {
 }
 
 /**
+ * Map API response to Plan format (supervisor own plans)
+ */
+function mapApiResponseToPlan(apiPlan: PlanApiResponse): Plan {
+  return {
+    id: apiPlan.id,
+    planType: apiPlan.type,
+    title: apiPlan.title,
+    description: apiPlan.description,
+    objectives: apiPlan.objectives,
+    startDate: format(new Date(apiPlan.startDate), "MMM dd, yyyy"),
+    endDate: format(new Date(apiPlan.endDate), "MMM dd, yyyy"),
+    targetDoctors: apiPlan.targetDoctors,
+    targetVisits: apiPlan.targetVisits,
+    status: apiPlan.status,
+    createdAt: format(new Date(apiPlan.createdAt), "MMM dd, yyyy"),
+    updatedAt: format(new Date(apiPlan.updatedAt), "MMM dd, yyyy"),
+  };
+}
+
+/**
  * Get all plans for rep
  */
 export async function getRepPlansAction(): Promise<{
@@ -201,6 +222,50 @@ export async function getManagerPlansAction(): Promise<{
     };
   } catch (error) {
     console.error("Error fetching manager plans:", error);
+    return {
+      success: false,
+      error: error as ApiError,
+    };
+  }
+}
+
+/**
+ * Get plans for supervisor (team rep plans + own plans)
+ */
+export async function getSupervisorPlansAction(): Promise<{
+  success: boolean;
+  repPlans?: VisitPlan[];
+  myPlans?: Plan[];
+  error?: ApiError;
+}> {
+  try {
+    const [response, profile] = await Promise.all([
+      apiFetch<GetPlansApiResponse>("/api/plans", {
+        method: "GET",
+      }),
+      fetchProfile().catch(() => null),
+    ]);
+
+    const supervisorId = profile?.id;
+    const visitPlans = response.data.map(mapApiResponseToVisitPlan);
+
+    const repPlans = supervisorId
+      ? visitPlans.filter((plan) => plan.createdBy?.id !== supervisorId)
+      : visitPlans;
+
+    const myPlans = supervisorId
+      ? response.data
+          .filter((plan) => plan.createdById === supervisorId)
+          .map(mapApiResponseToPlan)
+      : [];
+
+    return {
+      success: true,
+      repPlans,
+      myPlans,
+    };
+  } catch (error) {
+    console.error("Error fetching supervisor plans:", error);
     return {
       success: false,
       error: error as ApiError,

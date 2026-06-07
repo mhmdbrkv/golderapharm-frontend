@@ -18,7 +18,7 @@ export default async function Page() {
     );
   }
 
-  const { forecasts, totalCount } = result.data;
+  const { data, results } = result.data;
 
   return (
     <main className="flex flex-col gap-6 p-6 *:min-[1440px]:w-270.75! *:lg:w-5xl">
@@ -33,10 +33,10 @@ export default async function Page() {
         </div>
         <div className="bg-system-primary rounded-lg px-4 py-2">
           <p className="text-xs text-white opacity-80">Total Requests</p>
-          <p className="text-2xl font-semibold text-white">{totalCount}</p>
+          <p className="text-2xl font-semibold text-white">{results}</p>
         </div>
       </header>
-      <ForecastRequestsList forecasts={forecasts} />
+      <ForecastRequestsList forecasts={data} />
     </main>
   );
 }
