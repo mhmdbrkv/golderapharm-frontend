@@ -135,7 +135,7 @@ export async function getVisitReportData(
     method: "GET",
   });
 
-  const visit = visitsResponse.data.data.find((item) => item.id === visitId);
+  const visit = visitsResponse.data.find((item) => item.id === visitId);
 
   if (!visit) {
     throw {

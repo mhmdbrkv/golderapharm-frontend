@@ -62,8 +62,8 @@ export default function ReportConfiguration() {
     async function loadDoctors() {
       setIsLoadingDoctors(true);
       const result = await getDoctorsAction();
-      if (result.success && result.data?.data.doctors) {
-        setDoctors(result.data.data.doctors);
+      if (result.success && result.data) {
+        setDoctors(result.data);
       }
       setIsLoadingDoctors(false);
     }

@@ -109,7 +109,7 @@ export default function CreatePlanDialogSupervisor({
     // Fetch and group doctors
     getDoctorsAction().then((result) => {
       if (result.success && result.data) {
-        let allDoctors = result.data.data.doctors;
+        let allDoctors = result.data;
 
         // Filter by subRegion for non-manager users
         if (userRole !== "MANAGER" && userSubRegionName) {
