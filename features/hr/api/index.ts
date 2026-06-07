@@ -43,7 +43,7 @@ export async function getHRMembersAction(): Promise<{
     }
 
     // Filter to only show supervisors and medical reps (exclude managers)
-    const members = response.data.users.filter(
+    const members = response.data.filter(
       (user) => user.role === "SUPERVISOR" || user.role === "MEDICAL_REP",
     );
 

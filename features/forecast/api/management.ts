@@ -63,8 +63,8 @@ export async function getAllForecasts(): Promise<GetAllForecastsResponse> {
 export async function getAllForecastsAction(): Promise<{
   success: boolean;
   data?: {
-    forecasts: ForecastManagement[];
-    totalCount: number;
+    data: ForecastManagement[];
+    results: number;
   };
   error?: {
     message: string;
@@ -75,13 +75,13 @@ export async function getAllForecastsAction(): Promise<{
   try {
     const response = await getAllForecasts();
 
-    const forecasts = response.data.forecasts.map(transformForecast);
+    const forecasts = response.data.map(transformForecast);
 
     return {
       success: true,
       data: {
-        forecasts,
-        totalCount: response.data.results,
+        data: forecasts,
+        results: response.results,
       },
     };
   } catch (error) {

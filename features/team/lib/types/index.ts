@@ -181,21 +181,16 @@ export type UserApiResponse = {
 export type UserDetailResponse = {
   status: string;
   message: string;
-  data: {
-    results: number;
-    users: UserApiResponse[];
-  };
+  results: number;
+  data: UserApiResponse[];
 };
 
 export type ManagerTeamResponse = {
   status: string;
   message: string;
-  data: {
-    totalMembers: number;
-    supervisorsCount: number;
-    repsCount: number;
-    data: UserApiResponse[];
-  };
+  supervisorsCount: number;
+  repsCount: number;
+  data: UserApiResponse[];
 };
 
 export type SupervisorTeamResponse = {

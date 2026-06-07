@@ -38,7 +38,7 @@ export async function getManagerTeamAction(
     // If role is specified, fetch only that role
     if (role) {
       const response = await getManagerTeam(role);
-      const members: User[] = response.data.data.map((member) =>
+      const members: User[] = response.data.map((member) =>
         transformUserApiResponse(member),
       );
 
@@ -48,10 +48,11 @@ export async function getManagerTeamAction(
           ? { medicalReps: members, supervisors: [] }
           : { medicalReps: [], supervisors: members }),
         stats: {
-          totalMembers: response.data.totalMembers,
           supervisorsCount:
-            role === "SUPERVISOR" ? response.data.totalMembers : 0,
-          repsCount: role === "MEDICAL_REP" ? response.data.totalMembers : 0,
+            role === "SUPERVISOR" ? response.supervisorsCount : 0,
+          repsCount: role === "MEDICAL_REP" ? response.repsCount : 0,
+          totalMembers:
+            (response.repsCount || 0) + (response.supervisorsCount || 0),
         },
       };
     }
@@ -63,11 +64,11 @@ export async function getManagerTeamAction(
     ]);
 
     // Transform API response to User format
-    const medicalReps: User[] = repsResponse.data.data.map((member) =>
+    const medicalReps: User[] = repsResponse.data.map((member) =>
       transformUserApiResponse(member),
     );
 
-    const supervisors: User[] = supervisorsResponse.data.data.map((member) =>
+    const supervisors: User[] = supervisorsResponse.data.map((member) =>
       transformUserApiResponse(member),
     );
 
@@ -77,10 +78,10 @@ export async function getManagerTeamAction(
       supervisors,
       stats: {
         totalMembers:
-          repsResponse.data.totalMembers +
-          supervisorsResponse.data.totalMembers,
-        supervisorsCount: supervisorsResponse.data.totalMembers,
-        repsCount: repsResponse.data.totalMembers,
+          (repsResponse.data.length || 0) +
+          (supervisorsResponse.data.length || 0),
+        supervisorsCount: supervisorsResponse.supervisorsCount || 0,
+        repsCount: repsResponse.repsCount || 0,
       },
     };
   } catch (error) {
@@ -206,8 +207,8 @@ export async function getUserByIdAction(id: string) {
 
     if (
       response.status !== "success" ||
-      !response.data.users ||
-      response.data.users.length === 0
+      !response.data ||
+      response.data.length === 0
     ) {
       return {
         success: false,
@@ -220,7 +221,7 @@ export async function getUserByIdAction(id: string) {
     }
 
     // Get the first user from the array (should only be one when querying by ID)
-    const userApiData = response.data.users[0];
+    const userApiData = response.data[0];
 
     // Transform to User format
     const user: User = transformUserApiResponse(userApiData);

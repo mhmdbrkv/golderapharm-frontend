@@ -31,7 +31,7 @@ export default function ForecastRequestsList({
 }: {
   forecasts: ForecastManagement[];
 }) {
-  const router = useRouter();
+    const router = useRouter();
   const [expandedForecasts, setExpandedForecasts] = useState<Set<string>>(
     new Set(),
   );
@@ -146,7 +146,7 @@ export default function ForecastRequestsList({
       </span>
     );
   };
-
+ 
   if (forecasts.length === 0) {
     return (
       <div className="border-secondary-light flex flex-col items-center justify-center rounded-[14px] border-[0.8px] bg-white p-12 text-center">

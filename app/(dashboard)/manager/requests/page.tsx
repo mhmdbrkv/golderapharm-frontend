@@ -8,6 +8,7 @@ export default async function Page() {
   const result = await getManagerTeamRequestsAction();
   const requests = result.success ? (result.data ?? []) : [];
 
+ 
   // Calculate dynamic stats
   const total = requests.length;
   const pending = requests.filter((r) => r.status === "PENDING").length;

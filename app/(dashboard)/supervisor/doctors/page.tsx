@@ -20,12 +20,12 @@ export default async function Page() {
   );
   }
 
-  const doctors: { doctors: DoctorApiResponse[] } = result.data;
+  const doctors: DoctorApiResponse[] = result.data;
 
   return (
     <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 min-[1440px]:w-270.75! lg:w-5xl">
-      <DoctorsHeader doctors={doctors.doctors} />
-      <DoctorsList doctors={doctors.doctors} />
+      <DoctorsHeader doctors={doctors} />
+      <DoctorsList doctors={doctors} />
     </main>
   );
 }

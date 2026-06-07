@@ -87,10 +87,8 @@ export interface CreateAppraisalDto {
  */
 export interface GetAppraisalsResponse {
   success: boolean;
-  data: {
-    results: number;
-    appraisals: AppraisalApiResponse[];
-  };
+  results: number;
+  data: AppraisalApiResponse[];
 }
 
 /**

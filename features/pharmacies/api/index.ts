@@ -35,7 +35,6 @@ export async function createPharmacy(
 export async function getPharmaciesAction() {
   try {
     const response = await fetchPharmacies();
-    console.log("farmacies returned ", response);
     return {
       success: true,
       data: response,

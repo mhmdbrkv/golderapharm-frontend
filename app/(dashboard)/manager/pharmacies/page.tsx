@@ -7,8 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const result = await getPharmaciesAction();
-  console.log("pharmacies result:", JSON.stringify(result.data, null, 2));
-
+ 
   if (!result.success) {
     throw new Error(result.error?.message || "Failed to fetch pharmacies");
   }

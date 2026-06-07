@@ -11,8 +11,17 @@ export default async function Page() {
   if (!result.success) {
     throw new Error(result.error?.message || "Failed to fetch doctors");
   }
+  if (result.data == null) {
+    return (
+    <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 min-[1440px]:w-270.75! lg:w-5xl">
+      <DoctorsHeader doctors={[]} />
+      <DoctorsList doctors={[]} />
+    </main>
+  );
+  }
 
-  const doctors: DoctorApiResponse[] = result.data?.data.doctors ?? [];
+ 
+  const doctors: DoctorApiResponse[] = result.data;
 
   return (
     <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 *:min-[1440px]:w-270.75! lg:w-5xl">

@@ -137,7 +137,7 @@ export async function getAppraisals(): Promise<AppraisalApiResponse[]> {
   const response = await apiFetch<GetAppraisalsResponse>("/api/appraisals", {
     method: "GET",
   });
-  return response.data.appraisals;
+  return response.data;
 }
 
 /**
@@ -168,7 +168,6 @@ export async function getAppraisalReviews(): Promise<{
 }> {
   try {
     const appraisals = await getAppraisals();
-    console.log(appraisals);
     const reviews = appraisals.map(mapAppraisalToReview);
 
     // Calculate stats

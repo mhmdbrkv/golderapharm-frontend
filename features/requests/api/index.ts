@@ -146,10 +146,12 @@ export async function fetchMyRequests(): Promise<{
  * Fetch all requests for reps under supervisor
  */
 export async function fetchSupervisorTeamRequests(): Promise<{
-  data: { results: number; data: RequestApiResponse[] };
+  results: number;
+  data: RequestApiResponse[];
 }> {
   return apiFetch<{
-    data: { results: number; data: RequestApiResponse[] };
+    results: number;
+    data: RequestApiResponse[];
   }>("/api/supervisors/team/requests", {
     method: "GET",
   });
@@ -159,10 +161,12 @@ export async function fetchSupervisorTeamRequests(): Promise<{
  * Fetch all requests for reps under manager
  */
 export async function fetchManagerTeamRequests(): Promise<{
-  data: { results: number; data: RequestApiResponse[] };
+  results: number;
+  data: RequestApiResponse[];
 }> {
   return apiFetch<{
-    data: { results: number; data: RequestApiResponse[] };
+    results: number;
+    data: RequestApiResponse[];
   }>("/api/managers/team/requests", {
     method: "GET",
   });
@@ -340,14 +344,14 @@ export async function getSupervisorTeamRequestsAction() {
   try {
     const requests = await fetchSupervisorTeamRequests();
 
-    if (!requests.data || requests.data.results === 0) {
+    if (!requests.data || requests.results === 0) {
       return {
         success: true,
         data: [] as TRequest[],
       };
     }
     // Transform API response to frontend format and assign belongsTo as "rep"
-    const transformedData: TRequest[] = requests.data.data.map((request) => ({
+    const transformedData: TRequest[] = requests.data.map((request) => ({
       ...mapRequestApiResponseToTRequest(request),
       belongToWho: "rep" as const,
     }));
@@ -378,14 +382,14 @@ export async function getManagerTeamRequestsAction() {
   try {
     const requests = await fetchManagerTeamRequests();
 
-    if (!requests.data || requests.data.results === 0) {
+    if (!requests || requests.data.length === 0 || requests.results === 0) {
       return {
         success: true,
         data: [] as TRequest[],
       };
     }
     // Transform API response to frontend format and assign belongsTo as "rep"
-    const transformedData: TRequest[] = requests.data.data.map((request) => ({
+    const transformedData: TRequest[] = requests.data.map((request) => ({
       ...mapRequestApiResponseToTRequest(request),
     }));
 

@@ -182,8 +182,6 @@ export type HRStats = {
 export type HRUsersApiResponse = {
   status: string;
   message: string;
-  data: {
-    results: number;
-    users: HRMember[];
-  };
+  results: number;
+  data: HRMember[];
 };

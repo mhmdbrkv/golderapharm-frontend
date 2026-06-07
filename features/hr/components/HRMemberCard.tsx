@@ -80,17 +80,17 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
     : 0;
 
   // Get combined appraisals
-  const allAppraisals = [
-    ...member.appraisalsByManager,
-    ...member.appraisalsForRep,
-  ];
+  // const allAppraisals = [
+  //   ...member.appraisalsByManager,
+  //   ...member.appraisalsForRep,
+  // ];
 
   // Get combined plans
 
   // Get combined coaching sessions
   const totalCoachingSessions =
     (member.coachings?.length || 0) + (member.repCoachings?.length || 0);
-  const allPlans = [...member.plans, ...member.repPlans];
+  // const allPlans = [...member.plans, ...member.repPlans];
 
   return (
     <>
@@ -309,7 +309,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <Calendar className="h-3.5 w-3.5" />
-                Visits ({member.visits.length})
+                {/* Visits ({member.visits.length}) */}
               </button>
 
               <button
@@ -317,7 +317,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <ClipboardList className="h-3.5 w-3.5" />
-                Requests ({member.requests.length})
+                {/* Requests ({member.requests.length}) */}
               </button>
 
               <button
@@ -325,7 +325,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <FileText className="h-3.5 w-3.5" />
-                Reports ({member.visitReports.length})
+                {/* Reports ({member.visitReports.length}) */}
               </button>
 
               <button
@@ -333,7 +333,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <Target className="h-3.5 w-3.5" />
-                Plans ({allPlans.length})
+                {/* Plans ({allPlans.length}) */}
               </button>
 
               <button
@@ -341,7 +341,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <Package className="h-3.5 w-3.5" />
-                Forecasts ({member.forecasts.length})
+                {/* Forecasts ({member.forecasts.length}) */}
               </button>
 
               <button
@@ -349,7 +349,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
               >
                 <TrendingUp className="h-3.5 w-3.5" />
-                Appraisals ({allAppraisals.length})
+                {/* Appraisals ({allAppraisals.length}) */}
               </button>
 
               {totalCoachingSessions > 0 && (
@@ -358,7 +358,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
                   className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-black transition-colors hover:bg-slate-50"
                 >
                   <GraduationCap className="h-3.5 w-3.5" />
-                  Coaching ({totalCoachingSessions})
+                  {/* Coaching ({totalCoachingSessions}) */}
                 </button>
               )}
             </div>
@@ -367,7 +367,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
       </div>
 
       {/* Dialogs */}
-      <VisitsDialog
+      {/* <VisitsDialog
         open={visitsOpen}
         onOpenChange={setVisitsOpen}
         visits={member.visits}
@@ -409,7 +409,7 @@ export function HRMemberCard({ member }: HRMemberCardProps) {
         coachings={member.coachings || []}
         repCoachings={member.repCoachings || []}
         userName={member.name}
-      />
+      /> */}
     </>
   );
 }

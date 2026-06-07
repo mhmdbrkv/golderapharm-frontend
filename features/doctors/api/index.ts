@@ -29,9 +29,7 @@ export async function fetchDoctors(): Promise<{
  * Fetch doctors with optional sub-region filter
  */
 export async function fetchDoctorsWithFilter(subRegion?: string): Promise<{
-  data: {
-    doctors: DoctorApiResponse[];
-  };
+  data: DoctorApiResponse[];
 }> {
   const endpoint = subRegion
     ? `/api/doctors?subRegion=${encodeURIComponent(subRegion)}`
@@ -40,9 +38,7 @@ export async function fetchDoctorsWithFilter(subRegion?: string): Promise<{
   console.log(endpoint);
 
   return apiFetch<{
-    data: {
-      doctors: DoctorApiResponse[];
-    };
+    data: DoctorApiResponse[];
   }>(endpoint, {
     method: "GET",
   });

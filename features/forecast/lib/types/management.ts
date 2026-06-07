@@ -27,10 +27,8 @@ export interface ForecastManagementApiResponse {
 export interface GetAllForecastsResponse {
   status: string;
   message: string;
-  data: {
-    results: number;
-    forecasts: ForecastManagementApiResponse[];
-  };
+  results: number;
+  data: ForecastManagementApiResponse[];
 }
 
 export interface ForecastManagement {

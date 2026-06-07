@@ -68,7 +68,6 @@ export async function getVisitsAction() {
 export async function getManagerVisitsAction() {
   try {
     const response = await fetchAllVisits();
-    console.log(response);
 
     const visits: Visit[] = response.data.map(transformVisitApiResponse);
 
