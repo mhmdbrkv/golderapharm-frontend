@@ -70,7 +70,7 @@ export default function TodaySchedule({ visits }: TodayScheduleProps) {
           safeVisits.map((visit, index) => {
             const isCompleted = visit?.status === "COMPLETED";
             const displayName =
-              visit?.person || visit?.doctor?.nameAR || visit?.doctor?.nameEN || visit?.doctorId || "Visit";
+              visit?.person || visit?.doctor?.nameAR || visit?.doctor?.nameEN || visit?.doctorId || "Visit" + " - " + visit.doctor?.accountName || "";
             const initials = getInitials(displayName);
             const samples = Array.isArray(visit?.samples) ? visit.samples : [];
             const timeLabel =

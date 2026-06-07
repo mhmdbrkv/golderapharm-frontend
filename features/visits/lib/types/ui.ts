@@ -24,6 +24,7 @@ export type Visit = {
     id: string;
     nameAR: string;
     nameEN: string;
+    accountName: string;
   };
   doctorNameEN?: string;
   doctorNameAR?: string;
