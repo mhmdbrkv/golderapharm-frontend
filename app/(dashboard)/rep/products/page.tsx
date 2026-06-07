@@ -28,8 +28,9 @@ export default async function Page({ searchParams }: { searchParams?: { page?: s
       products = r.products as ProductApiResponse[];
     else if (Array.isArray(raw)) products = raw as ProductApiResponse[];
 
-    totalCount = (r.results as number) ?? products.length;
-  }
+   }
+   
+    totalCount =  result.results as number ?? products.length;
 
   return (
     <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 *:min-[1440px]:w-270.75! lg:w-5xl">

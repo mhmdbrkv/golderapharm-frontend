@@ -6,8 +6,10 @@ import { DoctorApiResponse } from "@/features/doctors/lib/types/api";
 export const dynamic = "force-dynamic";
 
 export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const params = await searchParams;
+
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
 
   const result = await getDoctorsAction(undefined, page, limit);
 
@@ -29,8 +31,11 @@ export default async function Page({ searchParams }: { searchParams?: { page?: s
 
   if (result.data) {
     const res = result.data as unknown as { data?: DoctorApiResponse[]; results?: number };
-    doctors = Array.isArray((res.data as unknown) ) ? (res.data as DoctorApiResponse[]) : (res as unknown as DoctorApiResponse[]);
-    totalCount = res.results ?? (Array.isArray(doctors) ? doctors.length : 0);
+    doctors = Array.isArray((res.data as unknown)) ? (res.data as DoctorApiResponse[]) : (res as unknown as DoctorApiResponse[]);
+   }
+  
+  if (result.results !== undefined) {
+    totalCount = result.results;
   }
 
   return (

@@ -17,9 +17,14 @@ type PageProps = {
 export const dynamic = "force-dynamic";
 
 export default async function Page({ searchParams }: PageProps) {
-  const { repId, date, sheetName, page: pageStr, limit: limitStr } = await searchParams;
-  const page = pageStr ? Number(pageStr) : 1;
-  const limit = limitStr ? Number(limitStr) : 10;
+  const params = await searchParams;
+  
+  
+  const { repId, date, sheetName } = params;
+  
+  
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
 
   const [result, repsRes] = await Promise.all([
     repId
@@ -33,8 +38,11 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const sales = extractSales(result.data);
-  const raw = result.data as any;
-  const totalCount = (raw && (raw.results || raw.length)) || sales.length;
+
+   let totalCount = 0;
+if(sales) {
+  totalCount = Object(result.data).results as number || sales.length;
+}
   const repOptions = (repsRes.medicalReps ?? []).map((rep) => ({
     id: rep.id,
     name: rep.name,

@@ -9,9 +9,12 @@ type PageProps = {
 };
 
 export default async function Page({ searchParams }: PageProps) {
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
-  const openDialog = searchParams?.openDialog === "true";
+  const params = await searchParams;
+
+  const page = params?.page ? Number(params.page) : 1;
+  const limit = params?.limit ? Number(params.limit) : 10;
+  
+  const openDialog = params?.openDialog === "true";
   const res = await getManagerTeamAction(undefined, page, limit);
   const regionsRes = await getRegionsAction();
 

@@ -23,12 +23,9 @@ export async function fetchRepVisits(
   page?: number,
   limit?: number,
 ): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>(
-    `/api/visits${buildPaginationQuery({ page, limit })}`,
-    {
-      method: "GET",
-    },
-  );
+  return apiFetch<FetchVisitsResponse>(`/api/visits`, {
+    method: "GET",
+  });
 }
 
 /**
@@ -38,12 +35,9 @@ export async function fetchAllVisits(
   page?: number,
   limit?: number,
 ): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>(
-    `/api/visits/all${buildPaginationQuery({ page, limit })}`,
-    {
-      method: "GET",
-    },
-  );
+  return apiFetch<FetchVisitsResponse>(`/api/visits/all`, {
+    method: "GET",
+  });
 }
 
 /**

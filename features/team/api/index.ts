@@ -20,11 +20,11 @@ import { transformUserApiResponse } from "../lib/utils";
  */
 export async function getManagerTeam(
   role: "MEDICAL_REP" | "SUPERVISOR",
-  page?: number,
-  limit?: number,
+  page: number = 1,
+  limit: number = 10,
 ): Promise<ManagerTeamResponse> {
   return apiFetch<ManagerTeamResponse>(
-    `/api/managers/team?role=${role}${buildPaginationQuery({ page, limit })}`,
+    `/api/managers/team${buildPaginationQuery({ page, limit })}${role ? `&role=${role}` : ""}`,
     {
       method: "GET",
     },
@@ -38,8 +38,8 @@ export async function getManagerTeam(
  */
 export async function getManagerTeamAction(
   role?: "MEDICAL_REP" | "SUPERVISOR",
-  page?: number,
-  limit?: number,
+  page: number = 1,
+  limit: number = 10,
 ): Promise<{
   success: boolean;
   medicalReps?: User[];
@@ -136,8 +136,8 @@ export async function getManagerTeamAction(
  * Get supervisor's team (Medical Reps only)
  */
 export async function getSupervisorTeam(
-  page?: number,
-  limit?: number,
+  page: number = 1,
+  limit: number = 10,
 ): Promise<SupervisorTeamResponse> {
   return apiFetch<SupervisorTeamResponse>(
     `/api/supervisors/team${buildPaginationQuery({ page, limit })}`,
@@ -152,7 +152,10 @@ export async function getSupervisorTeam(
  * ! This action is used in the coaching feature to fetch medical reps for joint visit reviews
  * ! used in plan creation for supervisors
  */
-export async function getSupervisorTeamAction(page?: number, limit?: number) {
+export async function getSupervisorTeamAction(
+  page: number = 1,
+  limit: number = 10,
+) {
   try {
     const response = await getSupervisorTeam(page, limit);
 

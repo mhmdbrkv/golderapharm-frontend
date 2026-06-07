@@ -5,10 +5,9 @@ import { calculateVisitStats } from "@/features/visits/lib/utils/stats";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
-  const visitsResponse = await getManagerVisitsAction(page, limit);
+export default async function Page() {
+ 
+  const visitsResponse = await getManagerVisitsAction();
   const visits = visitsResponse.success && visitsResponse.visits ? visitsResponse.visits : [];
   const stats = calculateVisitStats(visits);
 
@@ -18,8 +17,6 @@ export default async function Page({ searchParams }: { searchParams?: { page?: s
       <div className="mt-6">
         <VisitsPlanner
           visits={visits || []}
-          page={page}
-          limit={limit}
           totalCount={visitsResponse.totalCount ?? visits.length}
         />
       </div>

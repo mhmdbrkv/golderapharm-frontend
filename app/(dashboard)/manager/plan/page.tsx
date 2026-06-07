@@ -4,8 +4,11 @@ import { getManagerPlansAction } from "@/features/plan/api/get";
 export const dynamic = "force-dynamic";
 
 export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
+  const params = await searchParams;
+
+  const page: number = params?.page ? parseInt(params.page, 10) || 1 : 1;
+  const limit: number = params?.limit ? parseInt(params.limit, 10) || 10 : 10;
+
   const plansResult = await getManagerPlansAction(page, limit);
 
   if (!plansResult.success || !plansResult.data) {

@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import DayVisitsPanel from "@/features/visits/components/panels/DayVisitsPanel";
 import WeekVisitsPanel from "@/features/visits/components/panels/WeekVisitsPanel";
-import Pagination from "@/components/ui/Pagination";
-import { Visit } from "@/features/visits/lib/types/ui";
+ import { Visit } from "@/features/visits/lib/types/ui";
 
 type VisitsPlannerProps = {
   visits: Visit[];
@@ -27,9 +26,6 @@ type VisitsPlannerProps = {
 export default function VisitsPlanner({
   visits,
   reportBasePath,
-  page = 1,
-  limit = 10,
-  totalCount = 0,
 }: VisitsPlannerProps) {
   const [mode, setMode] = useState<"day" | "week">("day");
   const [selected, setSelected] = useState<Date>(new Date());
@@ -153,14 +149,7 @@ export default function VisitsPlanner({
           />
         )}
 
-                <div className="mt-6">
-          <Pagination page={page} limit={limit} totalCount={totalCount} />
-        </div>
-      </div>
-
-
-  
-        
+      </div>        
 
     </div>
   );
