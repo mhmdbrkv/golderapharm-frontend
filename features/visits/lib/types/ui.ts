@@ -20,6 +20,11 @@ export type Visit = {
   visitType?: string;
   doctorId: string;
   userId: string;
+  doctor?: {
+    id: string;
+    nameAR: string;
+    nameEN: string;
+  };
   doctorNameEN?: string;
   doctorNameAR?: string;
   createdById: string;
