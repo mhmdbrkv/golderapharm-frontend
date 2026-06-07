@@ -100,8 +100,8 @@ const ReviewForm = () => {
 
         // Fetch doctors
         const doctorsResult = await getDoctorsAction();
-        if (doctorsResult.success && doctorsResult.data?.data?.doctors) {
-          setDoctors(doctorsResult.data.data.doctors);
+        if (doctorsResult.success && doctorsResult.data) {
+          setDoctors(doctorsResult.data);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);

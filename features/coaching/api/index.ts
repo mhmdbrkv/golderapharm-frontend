@@ -67,7 +67,6 @@ export async function getAllCoachingReports(): Promise<GetAllCoachingReportsResp
 export async function getAllCoachingReportsAction() {
   try {
     const response = await getAllCoachingReports();
-    console.log(response);
 
     // Map API response to CoachingReport type
     const reports: CoachingReport[] = response.data.map((report) => {
