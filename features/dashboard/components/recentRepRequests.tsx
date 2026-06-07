@@ -37,6 +37,7 @@ const getStatusColor = (status: string) => {
 
 export default function RecentRepRequests({
   plans = [],
+  viewAllHref = "/manager/plan",
 }: RecentRepRequestsProps) {
   // Get only the latest 3 plans
   const recentPlans = plans.slice(0, 3);
