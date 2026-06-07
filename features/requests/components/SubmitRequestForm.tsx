@@ -870,7 +870,7 @@ export default function SubmitRequestForm({
                               <SelectValue placeholder="Select product" />
                             </SelectTrigger>
                             <SelectContent>
-                              {products.map((product) => (
+                              {products?.map((product) => (
                                 <SelectItem key={product.id} value={product.id}>
                                   {product.name}
                                 </SelectItem>

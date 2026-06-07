@@ -44,8 +44,10 @@ export default async function Page() {
     ? allDoctors.filter((d) => d.subRegion === userSubRegionName)
     : allDoctors;
   const products = productsResult.success
-    ? (productsResult.data ?? [])
+    ? (productsResult?.data?.data ?? [])
     : [];
+
+     
 
   // Calculate stats from requests
   const total = requests.length;
