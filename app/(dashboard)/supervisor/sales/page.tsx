@@ -29,11 +29,15 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const sales = extractSales(result.data);
-  const repOptions = (repsRes.success ? repsRes.members : []).map((rep) => ({
-    id: rep.id,
-    name: rep.name,
-  }));
 
+  let repOptions: { id: string; name: string }[] = [];
+  if (repsRes.success && repsRes.members && repsRes.members.length > 0) {
+    repOptions = repsRes.members.map((rep) => ({
+      id: rep.id,
+      name: rep.name,
+    }));
+  }
+  
   return (
     <main className="bg-secondary-very-light min-h-[calc(100vh-80px)] p-5 *:min-[1440px]:w-270.75! lg:w-5xl">
       <SalesHeader
