@@ -8,6 +8,8 @@ import {
   ManagerDashboardData,
   RepDashboardResponse,
   RepDashboardData,
+  SupervisorDashboardResponse,
+  SupervisorDashboardData,
 } from "../lib/types";
 
 /**
@@ -43,6 +45,49 @@ export async function getManagerDashboardAction(): Promise<{
   } catch (error) {
     const err = error as ApiError;
     console.error("Failed to fetch manager dashboard:", err);
+
+    return {
+      success: false,
+      error: {
+        message: err.message || "Failed to load dashboard data",
+        code: err.code || "DASHBOARD_FETCH_ERROR",
+        statusCode: err.statusCode,
+      },
+    };
+  }
+}
+
+/**
+ * Fetch supervisor dashboard data
+ */
+export async function fetchSupervisorDashboard(): Promise<SupervisorDashboardResponse> {
+  return apiFetch<SupervisorDashboardResponse>("/api/dashboard/supervisors", {
+    method: "GET",
+  });
+}
+
+/**
+ * Server action to get supervisor dashboard data
+ */
+export async function getSupervisorDashboardAction(): Promise<{
+  success: boolean;
+  data?: SupervisorDashboardData;
+  error?: {
+    message: string;
+    code: string;
+    statusCode?: number;
+  };
+}> {
+  try {
+    const response = await fetchSupervisorDashboard();
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    const err = error as ApiError;
+    console.error("Failed to fetch supervisor dashboard:", err);
 
     return {
       success: false,

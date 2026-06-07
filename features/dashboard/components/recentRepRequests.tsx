@@ -18,6 +18,7 @@ import { getInitials } from "@/lib/utils";
 
 interface RecentRepRequestsProps {
   plans?: DashboardPlan[];
+  viewAllHref?: string;
 }
 
 // Map plan status to display status
@@ -96,7 +97,7 @@ export default function RecentRepRequests({
       </CardContent>
       <CardFooter className="mt-4 text-center">
         <Link
-          href="manager/requests"
+          href={viewAllHref}
           className="text-system-primary ml-auto inline-flex items-center gap-1 text-sm font-medium hover:underline"
         >
           View All Plans

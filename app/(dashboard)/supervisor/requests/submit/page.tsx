@@ -4,6 +4,7 @@ import RequestStats from "@/features/requests/components/RequestStats";
 import SubmitRequestForm from "@/features/requests/components/SubmitRequestForm";
 import { getDoctorsAction } from "@/features/doctors/api";
 import { getProductsAction } from "@/features/products/api";
+import { extractProducts } from "@/features/products/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { fetchProfile } from "@/features/profile/api";
@@ -20,7 +21,6 @@ export default async function Page() {
       fetchProfile().catch(() => null),
     ]);
 
-  // Resolve subRegion name for doctor filtering
   let userSubRegionName: string | null = null;
   if (profile && profile.subRegionId) {
     const regionsResult = await getRegionsAction();
@@ -38,17 +38,14 @@ export default async function Page() {
   }
 
   const requests = requestsResult.success ? (requestsResult.data ?? []) : [];
-  const allDoctors = doctorsResult.success
-    ? (doctorsResult.data ?? [])
-    : [];
+  const allDoctors = doctorsResult.success ? (doctorsResult.data ?? []) : [];
   const doctors = userSubRegionName
     ? allDoctors.filter((d) => d.subRegion === userSubRegionName)
     : allDoctors;
   const products = productsResult.success
-    ? (productsResult.data?.data ?? [])
+    ? extractProducts(productsResult.data)
     : [];
 
-  // Calculate stats from requests
   const total = requests.length;
   const pending = requests.filter(
     (r: { status: string }) => r.status === "PENDING",
@@ -64,7 +61,7 @@ export default async function Page() {
     <main className="bg-secondary-very-light p-6 *:min-[1440px]:w-270.75! lg:w-5xl">
       <header className="mb-6 flex items-center justify-start gap-4">
         <Link
-          href={"/supervisor/request"}
+          href="/supervisor/requests"
           className="border-system-primary text-system-primary hover:bg-system-primary inline-flex h-9 w-9 items-center justify-center rounded-md border bg-white hover:border-transparent hover:text-white"
         >
           <ArrowLeft size={16} />

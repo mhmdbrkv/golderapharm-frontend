@@ -40,6 +40,7 @@ export default async function Home() {
           <PendingRequests
             requests={dashboardData?.requests}
             requestsCount={dashboardData?.requestsCount}
+            viewAllHref="/manager/requests"
           />
         </div>
         <aside className="flex flex-col gap-6">
@@ -47,7 +48,10 @@ export default async function Home() {
           <ProductsPerformance
             productPerformance={dashboardData?.productPerformance}
           />
-          <RecentRepRequests plans={dashboardData?.plans} />
+          <RecentRepRequests
+            plans={dashboardData?.plans}
+            viewAllHref="/manager/plan"
+          />
         </aside>
       </section>
       <section className="my-6 flex flex-row gap-6 *:flex-1 min-[1440px]:w-270.75!">

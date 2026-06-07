@@ -72,6 +72,13 @@ export interface ManagerDashboardResponse {
   data: ManagerDashboardData;
 }
 
+export type SupervisorDashboardData = ManagerDashboardData;
+
+export interface SupervisorDashboardResponse {
+  status: "success";
+  data: SupervisorDashboardData;
+}
+
 /**
  * Dashboard Stats for MainCards component
  */

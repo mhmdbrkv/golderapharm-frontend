@@ -11,7 +11,6 @@ import {
   ListChecks,
   Settings,
   Target,
-  MapPinned,
   Route,
   LucideProps,
   PackageSearch,
@@ -173,12 +172,12 @@ export const roleSidebarMap: Record<UserRole, SidebarItem[]> = {
       href: "/supervisor/products",
       icon: Package,
     },
-    {
-      id: "territory",
-      label: "Territory Map",
-      href: "/supervisor/territory",
-      icon: MapPinned,
-    },
+    // {
+    //   id: "territory",
+    //   label: "Territory Map",
+    //   href: "/supervisor/territory",
+    //   icon: MapPinned,
+    // },
     { id: "plan", label: "Plan", href: "/supervisor/plan", icon: Route },
     {
       id: "profile",

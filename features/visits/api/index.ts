@@ -63,6 +63,13 @@ export async function getVisitsAction() {
 }
 
 /**
+ * Server action to get all visits for supervisor (team scope)
+ */
+export async function getSupervisorVisitsAction() {
+  return getManagerVisitsAction();
+}
+
+/**
  * Server action to get all visits for manager
  */
 export async function getManagerVisitsAction() {

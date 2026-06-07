@@ -36,11 +36,11 @@ export const roleQuickActionsMap: Record<UserRole, QuickAction[]> = {
   ],
   SUPERVISOR: [
     {
-      id: "add-member",
-      title: "Add new Medical Rep",
-      desc: "Register a new team member",
+      id: "view-team",
+      title: "View My Team",
+      desc: "Monitor your medical representatives",
       icon: UserPlus,
-      href: "/supervisor/team?openDialog=true",
+      href: "/supervisor/team",
     },
     {
       id: "schedule-visit",

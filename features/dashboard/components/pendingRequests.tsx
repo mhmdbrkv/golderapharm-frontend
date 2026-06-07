@@ -38,10 +38,12 @@ const getRequestIcon = (type: string) => {
 interface PendingRequestsProps {
   requests?: DashboardRequest[];
   requestsCount?: number;
+  viewAllHref?: string;
 }
 
 export default function PendingRequests({
   requests = [],
+  viewAllHref = "/manager/requests",
 }: PendingRequestsProps) {
   // Get only pending requests (maximum 4 for display)
   const pendingRequests = requests
@@ -123,7 +125,7 @@ export default function PendingRequests({
 
       <CardFooter className="mt-auto">
         <Link
-          href="manager/requests"
+          href={viewAllHref}
           className="text-system-primary ml-auto inline-flex items-center gap-2 text-sm font-medium hover:underline"
         >
           View All Requests

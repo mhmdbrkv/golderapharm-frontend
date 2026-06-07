@@ -12,7 +12,7 @@ export default async function Page() {
     getSupervisorTeamAction(),
   ]);
 
-  const doctors = doctorsResponse.data.doctors;
+  const doctors = doctorsResponse.data ?? [];
   const medicalReps = teamResponse.success ? teamResponse.members : [];
 
   return (

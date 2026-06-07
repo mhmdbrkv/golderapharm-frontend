@@ -1,12 +1,12 @@
 import VisitsHeader from "@/features/visits/components/VisitsHeader";
 import VisitsPlanner from "@/features/visits/components/VisitsPlanner";
-import { getVisitsAction } from "@/features/visits/api";
+import { getSupervisorVisitsAction } from "@/features/visits/api";
 import { calculateVisitStats } from "@/features/visits/lib/utils/stats";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const visitsResponse = await getVisitsAction();
+  const visitsResponse = await getSupervisorVisitsAction();
   const visits = visitsResponse.success ? visitsResponse.visits : [];
   const stats = calculateVisitStats(visits);
 

@@ -31,7 +31,7 @@ export default async function Page() {
             Requests Review & Approval
           </h1>
           <p className="text-secondary-dark text-base/6 font-normal">
-            Review supervisor decisions and approve or reject requests
+            Review team requests and approve or reject submissions
           </p>
         </div>
         <Link
