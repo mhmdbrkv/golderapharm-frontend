@@ -21,9 +21,9 @@ export function SafeCldImage({
     // If NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME is set, use next-cloudinary's CldImage
     return (
       <CldImage
+        {...(props as unknown as Omit<CldImageProps, "src" | "alt">)}
         src={src}
         alt={alt}
-        {...(props as unknown as CldImageProps)}
       />
     );
   }
@@ -34,5 +34,5 @@ export function SafeCldImage({
       ? src
       : fallbackUrl || src;
 
-  return <Image src={resolvedSrc} alt={alt} {...props} />;
+  return <Image {...props} src={resolvedSrc} alt={alt} />;
 }
