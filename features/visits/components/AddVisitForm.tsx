@@ -68,7 +68,8 @@ type RoleBasedAddVisitFormProps =
 // Shared constants
 
 export default function AddVisitForm(props: RoleBasedAddVisitFormProps) {
-  const { role, doctors } = props;
+  const { role, doctors } = props;    
+
   const supervisors = "supervisors" in props ? props.supervisors : [];
   const medicalReps = "medicalReps" in props ? props.medicalReps : [];
 

@@ -12,7 +12,8 @@ export default async function Page() {
     getManagerTeamAction(),
   ]);
 
-  const doctors = doctorsResponse.data.doctors;
+  const doctors = doctorsResponse.data ?? [];
+
   const supervisors = teamResponse.success ? teamResponse.supervisors : [];
   const medicalReps = teamResponse.success ? teamResponse.medicalReps : [];
 
@@ -36,7 +37,7 @@ export default async function Page() {
       </header>
       <AddVisitForm
         role="MANAGER"
-        doctors={doctors}
+        doctors={doctors ?? []}
         supervisors={supervisors || []}
         medicalReps={medicalReps || []}
       />

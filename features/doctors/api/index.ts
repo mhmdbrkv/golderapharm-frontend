@@ -12,14 +12,10 @@ import {
  * Fetch all doctors
  */
 export async function fetchDoctors(): Promise<{
-  data: {
-    doctors: DoctorApiResponse[];
-  };
+  data: DoctorApiResponse[];
 }> {
   return apiFetch<{
-    data: {
-      doctors: DoctorApiResponse[];
-    };
+    data: DoctorApiResponse[];
   }>("/api/doctors", {
     method: "GET",
   });
