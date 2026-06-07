@@ -39,7 +39,7 @@ export default async function Page() {
 
   const requests = requestsResult.success ? (requestsResult.data ?? []) : [];
   const allDoctors = doctorsResult.success
-    ? (doctorsResult.data?.data?.doctors ?? [])
+    ? (doctorsResult.data ?? [])
     : [];
   const doctors = userSubRegionName
     ? allDoctors.filter((d) => d.subRegion === userSubRegionName)
