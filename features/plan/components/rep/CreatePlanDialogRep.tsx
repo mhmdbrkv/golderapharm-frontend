@@ -101,7 +101,7 @@ export default function CreatePlanDialogRep({
         ? userSubRegionName
         : undefined;
 
-    getDoctorsAction(subRegionFilter).then((result) => {
+    getDoctorsAction(subRegionFilter, undefined, undefined, false).then((result) => {
       if (result.success && result.data) {
         let allDoctors = result.data;
 

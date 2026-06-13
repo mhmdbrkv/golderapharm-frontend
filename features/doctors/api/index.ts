@@ -32,6 +32,7 @@ export async function fetchDoctorsWithFilter(
   subRegion?: string,
   page?: number,
   limit?: number,
+  paginate: boolean = true,
 ): Promise<PaginatedApiResponse<DoctorApiResponse[]>> {
   const params = new URLSearchParams();
 
@@ -39,12 +40,16 @@ export async function fetchDoctorsWithFilter(
     params.append("subRegion", subRegion);
   }
 
-  if (page !== undefined) {
-    params.append("page", String(page));
-  }
+  if (paginate === false) {
+    params.append("paginate", "false");
+  } else {
+    if (page !== undefined) {
+      params.append("page", String(page));
+    }
 
-  if (limit !== undefined) {
-    params.append("limit", String(limit));
+    if (limit !== undefined) {
+      params.append("limit", String(limit));
+    }
   }
 
   const endpoint = `/api/doctors${params.toString() ? `?${params.toString()}` : ""}`;
@@ -112,11 +117,17 @@ export async function deleteDoctor(id: string): Promise<void> {
  */
 export async function getDoctorsAction(
   subRegion?: string,
-  page: number = 1,
-  limit: number = 10,
+  page?: number,
+  limit?: number,
+  paginate: boolean = true,
 ) {
   try {
-    const response = await fetchDoctorsWithFilter(subRegion, page, limit);
+    const response = await fetchDoctorsWithFilter(
+      subRegion,
+      page,
+      limit,
+      paginate,
+    );
 
     return {
       success: true,
