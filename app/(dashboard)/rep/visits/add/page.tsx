@@ -4,9 +4,9 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default async function Page() {
-  const doctorsResponse = await fetchDoctors();
+  const doctorsResponse = await fetchDoctors(undefined, undefined, false);
   const doctors = doctorsResponse.data ?? [];
-
+  
   return (
     <main className="flex min-h-[calc(100vh-195px)] flex-col gap-6 p-6 *:min-[1440px]:w-270.75! *:lg:w-5xl">
       <header className="flex items-center justify-start gap-2">

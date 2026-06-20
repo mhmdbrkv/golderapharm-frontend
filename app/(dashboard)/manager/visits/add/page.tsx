@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const [doctorsResponse, teamResponse] = await Promise.all([
-    fetchDoctors(),
+    fetchDoctors(undefined, undefined, false),
     getManagerTeamAction(),
   ]);
 

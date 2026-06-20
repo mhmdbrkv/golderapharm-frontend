@@ -107,7 +107,7 @@ export default function CreatePlanDialogSupervisor({
     }
 
     // Fetch and group doctors
-    getDoctorsAction().then((result) => {
+    getDoctorsAction(undefined, undefined, undefined, false).then((result) => {
       if (result.success && result.data) {
         let allDoctors = result.data;
 
