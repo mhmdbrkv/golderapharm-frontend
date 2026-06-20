@@ -15,13 +15,27 @@ import type {
 export async function fetchProducts(
   page?: number,
   limit?: number,
+  paginate?: boolean,
 ): Promise<GetProductsResponse> {
-  return apiFetch<GetProductsResponse>(
-    `/api/products${buildPaginationQuery({ page, limit })}`,
-    {
-      method: "GET",
-    },
-  );
+  const params = new URLSearchParams();
+
+  if (paginate === false) {
+    params.append("paginate", "false");
+  } else {
+    if (page !== undefined) {
+      params.append("page", String(page));
+    }
+
+    if (limit !== undefined) {
+      params.append("limit", String(limit));
+    }
+  }
+
+  const endpoint = `/api/products${params.toString() ? `?${params.toString()}` : ""}`;
+
+  return apiFetch<GetProductsResponse>(endpoint, {
+    method: "GET",
+  });
 }
 
 /**

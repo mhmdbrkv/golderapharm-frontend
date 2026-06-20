@@ -363,7 +363,11 @@ export async function submitForecast(
 export async function fetchProducts(): Promise<{
   data: Product[];
 }> {
-  const response = (await fetchProductsFromStore()) as GetProductsResponse;
+  const response = (await fetchProductsFromStore(
+    undefined,
+    undefined,
+    false,
+  )) as GetProductsResponse;
   const products = (response.data as ProductApiResponse[]).map(
     mapProductApiToProduct,
   );
