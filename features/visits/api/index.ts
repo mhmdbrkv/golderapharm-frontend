@@ -22,10 +22,14 @@ import { Visit } from "@/features/visits/lib/types/ui";
 export async function fetchRepVisits(
   page?: number,
   limit?: number,
+  paginate: boolean = true,
 ): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>(`/api/visits`, {
-    method: "GET",
-  });
+  return apiFetch<FetchVisitsResponse>(
+    `/api/visits${buildPaginationQuery({ page, limit, paginate })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
@@ -34,18 +38,26 @@ export async function fetchRepVisits(
 export async function fetchAllVisits(
   page?: number,
   limit?: number,
+  paginate: boolean = true,
 ): Promise<FetchVisitsResponse> {
-  return apiFetch<FetchVisitsResponse>(`/api/visits/all`, {
-    method: "GET",
-  });
+  return apiFetch<FetchVisitsResponse>(
+    `/api/visits/all${buildPaginationQuery({ page, limit, paginate })}`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 /**
  * Server action to get all visits with data transformation
  */
-export async function getVisitsAction(page?: number, limit?: number) {
+export async function getVisitsAction(
+  page?: number,
+  limit?: number,
+  paginate: boolean = true,
+) {
   try {
-    const response = await fetchRepVisits(page, limit);
+    const response = await fetchRepVisits(page, limit, paginate);
 
     // Transform API response to UI format
     const visits: Visit[] = response.data.map(transformVisitApiResponse);
@@ -76,16 +88,24 @@ export async function getVisitsAction(page?: number, limit?: number) {
 /**
  * Server action to get all visits for supervisor (team scope)
  */
-export async function getSupervisorVisitsAction(page?: number, limit?: number) {
-  return getManagerVisitsAction(page, limit);
+export async function getSupervisorVisitsAction(
+  page?: number,
+  limit?: number,
+  paginate: boolean = true,
+) {
+  return getManagerVisitsAction(page, limit, paginate);
 }
 
 /**
  * Server action to get all visits for manager
  */
-export async function getManagerVisitsAction(page?: number, limit?: number) {
+export async function getManagerVisitsAction(
+  page?: number,
+  limit?: number,
+  paginate: boolean = true,
+) {
   try {
-    const response = await fetchAllVisits(page, limit);
+    const response = await fetchAllVisits(page, limit, paginate);
 
     const visits: Visit[] = response.data.map(transformVisitApiResponse);
 

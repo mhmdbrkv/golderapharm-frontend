@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function Page({ searchParams }: { searchParams?: { page?: string; limit?: string } }) {
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const limit = searchParams?.limit ? Number(searchParams.limit) : 10;
-  const visitsResponse = await getSupervisorVisitsAction(page, limit);
+  const visitsResponse = await getSupervisorVisitsAction(undefined, undefined, false);
   const visits = visitsResponse.success && visitsResponse.visits ? visitsResponse.visits : [];
   const stats = calculateVisitStats(visits);
 
